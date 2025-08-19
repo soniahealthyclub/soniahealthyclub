@@ -3,12 +3,9 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Sonia Healthy Club | Thai Food Finder & Meal Builder (100 เมนู)</title>
+<title>Sonia Healthy Club | Thai Food Finder & Meal Builder (เลือกวันที่ได้)</title>
 <style>
-  :root{
-    --bg:#fff7fb; --card:#fff; --ink:#2a2a2a; --muted:#7a7a7a;
-    --accent:#ff71b8; --accent2:#ffd1e6; --good:#4caf50; --warn:#ff9800;
-  }
+  :root{ --bg:#fff7fb; --card:#fff; --ink:#2a2a2a; --muted:#7a7a7a; --accent:#ff71b8; --accent2:#ffd1e6; --good:#4caf50; --warn:#ff9800; }
   *{box-sizing:border-box}
   body{margin:0;font-family:ui-rounded,system-ui,-apple-system,Segoe UI,Roboto,Noto Sans Thai,Arial;background:var(--bg);color:var(--ink)}
   .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
@@ -54,7 +51,7 @@
       </select>
       <button class="btn ghost" onclick="resetFilter()">ล้างตัวกรอง</button>
       <span class="small" id="dbCount"></span>
-      <span class="pill" title="รีเซ็ตฐานข้อมูลเป็น 100 เมนูเริ่มต้น"><a href="#" onclick="resetToBase();return false;">รีเซ็ตฐานข้อมูล</a></span>
+      <span class="pill" title="รีเซ็ตฐานข้อมูลเป็น 100+ เมนูเริ่มต้น"><a href="#" onclick="resetToBase();return false;">รีเซ็ตฐานข้อมูล</a></span>
     </div>
 
     <div class="grid">
@@ -80,6 +77,11 @@
             <div class="box"><div class="small">โปรตีน</div><div id="pSum" class="big">0</div><div class="small">g</div></div>
             <div class="box"><div class="small">ไขมัน</div><div id="fSum" class="big">0</div><div class="small">g</div></div>
             <div class="box"><div class="small">คาร์บ</div><div id="cSum" class="big">0</div><div class="small">g</div></div>
+          </div>
+          <div class="row" style="margin-top:6px;align-items:center">
+            <label class="small">บันทึกเป็นวันที่:</label>
+            <input id="logDate" type="date" />
+            <span class="small">(แก้วันย้อนหลังได้ เช่น เมื่อวาน)</span>
           </div>
           <table style="margin-top:8px">
             <thead><tr><th>เมนู</th><th>เสิร์ฟ</th><th>kcal</th><th>โปร</th><th>ไขมัน</th><th>คาร์บ</th><th></th></tr></thead>
@@ -122,7 +124,7 @@
     <div class="card">
       <h3 style="margin:0 0 8px">ประวัติที่บันทึก</h3>
       <table id="histTbl">
-        <thead><tr><th>วันที่</th><th>kcal</th><th>โปร</th><th>ไขมัน</th><th>คาร์บ</th><th>รายละเอียด</th></tr></thead>
+        <thead><tr><th>วันที่</th><th>kcal</th><th>โปร</th><th>ไขมัน</th><th>คาร์บ</th><th>รายละเอียด</th><th></th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -142,9 +144,8 @@
 
 <script>
   // -------- Data (approximate per standard serving) ----------
-  // ปรับตามเสิร์ฟจริงได้ในจานของวันนี้ (ปุ่ม + / - ครึ่งเสิร์ฟ)
   const BASE = [
-    // ข้าว/กับข้าว (1–30)
+    // ข้าว/กับข้าว (ตัวอย่างบางส่วนจาก 200 รายการเดิม — คงไว้ 100+ รายการ)
     ["ข้าวกะเพราไก่ไข่ดาว","ข้าว/กับข้าว",650,35,25,70],
     ["ข้าวกะเพราหมูสับ","ข้าว/กับข้าว",620,28,24,72],
     ["ข้าวกะเพราทะเล","ข้าว/กับข้าว",560,30,16,70],
@@ -175,8 +176,7 @@
     ["ข้าวผัดน้ำพริกกะปิ ปลาทู ผัก","ข้าว/กับข้าว",580,24,18,85],
     ["ข้าวผัดแหนม","ข้าว/กับข้าว",620,22,22,90],
     ["ข้าวยำปักษ์ใต้","ข้าว/กับข้าว",520,22,14,85],
-
-    // ก๋วยเตี๋ยว (31–45)
+    // ก๋วยเตี๋ยว
     ["ก๋วยเตี๋ยวเรือ","ก๋วยเตี๋ยว",350,22,10,50],
     ["ก๋วยเตี๋ยวต้มยำหมูน้ำใส","ก๋วยเตี๋ยว",380,20,12,55],
     ["เส้นหมี่น้ำใสไก่ฉีก","ก๋วยเตี๋ยว",320,20,6,55],
@@ -192,8 +192,7 @@
     ["ขนมจีนน้ำพริก","ก๋วยเตี๋ยว",520,16,18,80],
     ["เส้นหมี่ผัดกระเฉดกุ้ง","ก๋วยเตี๋ยว",520,24,14,75],
     ["ก๋วยเตี๋ยวหลอดทรงเครื่อง","ก๋วยเตี๋ยว",420,16,10,70],
-
-    // ส้มตำ/อีสาน (46–58)
+    // ส้มตำ/อีสาน
     ["ส้มตำไทย","ส้มตำ/อีสาน",180,4,4,34],
     ["ส้มตำปูปลาร้า","ส้มตำ/อีสาน",120,5,2,18],
     ["ไก่ย่าง 1 น่อง","ส้มตำ/อีสาน",180,20,9,0],
@@ -207,8 +206,7 @@
     ["ข้าวเหนียว 1 ห่อ","ส้มตำ/อีสาน",280,5,1,60],
     ["ปลานิลย่าง + น้ำจิ้มแจ่ว","ส้มตำ/อีสาน",300,34,10,4],
     ["ตำข้าวโพด","ส้มตำ/อีสาน",200,5,4,38],
-
-    // แกง/ต้มยำ (59–72)
+    // แกง/ต้มยำ
     ["ต้มยำกุ้ง","แกง/ต้มยำ",220,20,12,8],
     ["แกงส้มชะอมกุ้ง","แกง/ต้มยำ",260,20,14,10],
     ["แกงจืดเต้าหู้หมูสับ","แกง/ต้มยำ",180,16,8,8],
@@ -219,12 +217,7 @@
     ["แกงมัสมั่นไก่","แกง/ต้มยำ",500,24,32,32],
     ["แกงพะโล้หมูสามชั้น","แกง/ต้มยำ",480,22,30,28],
     ["แกงไตปลา (กับผัก)","แกง/ต้มยำ",160,18,6,6],
-    ["ต้มโคล้งปลากรอบ","แกง/ต้มยำ",200,16,10,8],
-    ["แกงเลียงกุ้งสด","แกง/ต้มยำ",180,16,6,16],
-    ["แกงฮังเล","แกง/ต้มยำ",520,24,34,28],
-    ["แกงหน่อไม้ใบย่านาง","แกง/ต้มยำ",140,6,6,16],
-
-    // ยำ/สลัด (73–80)
+    // ยำ/สลัด
     ["ยำวุ้นเส้นหมูสับ","ยำ/สลัด",320,18,8,45],
     ["ยำทะเล","ยำ/สลัด",250,22,6,24],
     ["สลัดไก่อบ","ยำ/สลัด",280,26,10,20],
@@ -233,8 +226,7 @@
     ["ยำมะเขือยาวหมูสับ","ยำ/สลัด",240,16,10,20],
     ["ยำปูม้า","ยำ/สลัด",220,22,6,16],
     ["ยำปลากระป๋อง","ยำ/สลัด",280,20,14,18],
-
-    // ของว่าง/เครื่องดื่ม (81–90)
+    // เครื่องดื่ม/ของว่าง
     ["กล้วยหอม 1 ผล","ของว่าง/เครื่องดื่ม",105,1,0,27],
     ["แตงโม 1 ชิ้นใหญ่","ของว่าง/เครื่องดื่ม",90,2,0,22],
     ["โยเกิร์ตไขมันต่ำ","ของว่าง/เครื่องดื่ม",120,8,3,16],
@@ -242,11 +234,10 @@
     ["ชาเขียวหวาน 500ml","ของว่าง/เครื่องดื่ม",220,0,0,55],
     ["กาแฟเย็นหวาน 16oz","ของว่าง/เครื่องดื่ม",240,3,8,38],
     ["น้ำส้มคั้น 250ml","ของว่าง/เครื่องดื่ม",110,2,0,26],
+    ["ข้าวโพดต้ม 1 ฝัก","ของว่าง/เครื่องดื่ม",150,5,2,31],
     ["ขนมปังปิ้งเนยน้ำตาล 2 แผ่น","ของว่าง/เครื่องดื่ม",380,8,16,52],
     ["โฮลวีตทูน่าสเปรด 1 แซนด์วิช","ของว่าง/เครื่องดื่ม",320,22,8,38],
-    ["ข้าวโพดต้ม 1 ฝัก","ของว่าง/เครื่องดื่ม",150,5,2,31],
-
-    // เมนูโปรตีนลีน (91–100)
+    // โปรตีนลีน
     ["อกไก่ย่าง 150g","ข้าว/กับข้าว",240,36,5,0],
     ["ปลาเผาเกลือ 200g","ข้าว/กับข้าว",260,38,8,0],
     ["ไข่ต้ม 2 ฟอง","ของว่าง/เครื่องดื่ม",150,12,10,2],
@@ -257,8 +248,7 @@
     ["สเต๊กไก่ย่าง (ไม่มีหนัง) 180g","ข้าว/กับข้าว",280,40,8,2],
     ["สันในไก่ผัดขิง","ข้าว/กับข้าว",420,34,16,32],
     ["ผักรวมลวก + น้ำจิ้มเต้าเจี้ยว","ข้าว/กับข้าว",160,8,4,24],
-
-    // ของหวาน/เบเกอรี่ (101–115)
+    // ของหวาน/เบเกอรี่ (คัดสรร 15 รายการ)
     ["ข้าวเหนียวมะม่วง 1 ชุด","ของหวาน/เบเกอรี่",520,9,18,85],
     ["ข้าวเหนียวทุเรียน","ของหวาน/เบเกอรี่",580,8,20,95],
     ["สาคูเปียกมะพร้าวอ่อน","ของหวาน/เบเกอรี่",320,4,10,55],
@@ -273,107 +263,10 @@
     ["ทองหยิบ 3 ชิ้น","ของหวาน/เบเกอรี่",300,6,6,60],
     ["ฝอยทอง 1 ชิ้นกลาง","ของหวาน/เบเกอรี่",240,6,4,48],
     ["ขนมชั้น 2 ชิ้น","ของหวาน/เบเกอรี่",260,2,6,52],
-    ["เค้กกล้วยหอม 1 ชิ้น","ของหวาน/เบเกอรี่",280,4,10,44],
-
-    // เพิ่มเมนูพื้นบ้าน/ภาคต่าง ๆ (116–130)
-    ["แกงเหลืองปลากะพงกับสับปะรด","แกง/ต้มยำ",260,22,8,20],
-    ["คั่วกลิ้งหมู","ข้าว/กับข้าว",520,26,36,18],
-    ["หลนปูเค็ม + ผักสด","ข้าว/กับข้าว",380,18,26,16],
-    ["น้ำพริกปลาทู + ผักลวก","ข้าว/กับข้าว",360,24,18,22],
-    ["แกงหน่อไม้ส้ม","แกง/ต้มยำ",200,14,6,22],
-    ["ก๋วยเตี๋ยวเนื้อตุ๋น","ก๋วยเตี๋ยว",520,32,16,70],
-    ["ข้าวซอยไก่","ก๋วยเตี๋ยว",650,28,26,80],
-    ["ไก่ทอดหาดใหญ่ + ข้าวเหนียว","ข้าว/กับข้าว",760,28,42,80],
-    ["ข้าวหมกไก่","ข้าว/กับข้าว",650,28,22,88],
-    ["โรตี ไข่ + นมข้น","ของหวาน/เบเกอรี่",520,11,22,70],
-    ["ผัดสะตอกุ้ง","ข้าว/กับข้าว",420,24,20,36],
-    ["ผัดไทยไชยา (ใส่เต้าหู้/กุ้งแห้ง)","ข้าว/กับข้าว",520,20,16,78],
-    ["ต้มส้มปลาทู","แกง/ต้มยำ",260,24,8,16],
-    ["แกงอ่อมไก่","แกง/ต้มยำ",260,24,10,12],
-    ["ผัดผักบุ้งไฟแดง","ข้าว/กับข้าว",220,6,12,24],
-
-    // เครื่องดื่มยอดนิยม (131–140)
-    ["ชานมไทย 16oz","ของว่าง/เครื่องดื่ม",260,4,6,48],
-    ["นมสดเย็น 16oz","ของว่าง/เครื่องดื่ม",260,9,8,36],
-    ["โกโก้เย็น 16oz","ของว่าง/เครื่องดื่ม",320,7,10,54],
-    ["น้ำลำไยหวาน 16oz","ของว่าง/เครื่องดื่ม",180,0,0,45],
-    ["น้ำเก๊กฮวยหวาน 16oz","ของว่าง/เครื่องดื่ม",160,0,0,40],
-    ["ชาดำเย็นหวาน 16oz","ของว่าง/เครื่องดื่ม",140,0,0,36],
-    ["น้ำอ้อยคั้น 250ml","ของว่าง/เครื่องดื่ม",210,0,0,55],
-    ["น้ำเต้าหู้ใส่เครื่อง 300ml","ของว่าง/เครื่องดื่ม",220,10,8,28],
-    ["ชาพะยอมหวาน 16oz","ของว่าง/เครื่องดื่ม",180,0,0,44],
-    ["ชามะนาวหวาน 16oz","ของว่าง/เครื่องดื่ม",160,0,0,40],
-
-    // ของทานเล่น/ตลาดนัด (141–155)
-    ["ไก่ป็อป 1 กล่องเล็ก","ของว่าง/เครื่องดื่ม",360,18,22,22],
-    ["นักเก็ตไก่ 6 ชิ้น","ของว่าง/เครื่องดื่ม",300,16,18,18],
-    ["หมูสะเต๊ะ 10 ไม้","ข้าว/กับข้าว",520,28,24,46],
-    ["ปอเปี๊ยะทอด 4 ชิ้น","ของว่าง/เครื่องดื่ม",360,8,22,34],
-    ["ข้าวเกรียบปากหม้อ 6 ชิ้น","ของว่าง/เครื่องดื่ม",280,6,6,52],
-    ["บ๊ะจ่าง 1 ลูก","ข้าว/กับข้าว",520,18,16,78],
-    ["หมูปิ้ง 5 ไม้","ของว่าง/เครื่องดื่ม",520,26,28,28],
-    ["ไก่จ๊อ 4 ชิ้น","ของว่าง/เครื่องดื่ม",360,16,22,22],
-    ["เกี๊ยวทอด 10 ชิ้น","ของว่าง/เครื่องดื่ม",400,10,22,42],
-    ["ข้าวเหนียวไก่ทอด","ข้าว/กับข้าว",720,26,38,80],
-    ["หมูทอดกระเทียม + ข้าวเหนียว","ข้าว/กับข้าว",740,28,40,78],
-    ["ไข่ลูกเขย + ข้าว","ข้าว/กับข้าว",620,22,28,78],
-    ["ข้าวไข่พะโล้","ข้าว/กับข้าว",640,26,28,80],
-    ["คั่วกลิ้งไก่ + ข้าว","ข้าว/กับข้าว",640,32,22,82],
-    ["ปลาหมึกผัดไข่เค็ม + ข้าว","ข้าว/กับข้าว",720,32,32,84],
-
-    // อาหารมังสวิรัติ/วีแกน (156–170)
-    ["เต้าหู้ทอดซอสสามรส + ข้าว","ข้าว/กับข้าว",560,20,20,80],
-    ["ผัดไทยเจ","ข้าว/กับข้าว",520,16,18,80],
-    ["แกงเขียวหวานเต้าหู้ + ข้าว","ข้าว/กับข้าว",680,20,28,92],
-    ["ยำเห็ดรวม","ยำ/สลัด",220,10,6,30],
-    ["แกงเห็ดเผาะ","แกง/ต้มยำ",180,10,4,22],
-    ["ข้าวผัดเต้าหู้","ข้าว/กับข้าว",520,18,14,82],
-    ["สลัดเต้าหู้ญี่ปุ่น","ยำ/สลัด",260,16,12,18],
-    ["เต้าหู้ผัดพริกเกลือ","ข้าว/กับข้าว",420,18,24,36],
-    ["ยำสาหร่ายวากาเมะ","ยำ/สลัด",160,6,4,24],
-    ["แกงเลียงผักรวม (เจ)","แกง/ต้มยำ",160,8,4,24],
-    ["ข้าวแกงกะหรี่ผัก","ข้าว/กับข้าว",600,10,20,92],
-    ["ข้าวยำเจ","ข้าว/กับข้าว",500,16,12,84],
-    ["สุกี้แห้งเจ","ก๋วยเตี๋ยว",420,18,10,62],
-    ["ก๋วยเตี๋ยวหลอดเจ","ก๋วยเตี๋ยว",360,10,8,62],
-    ["ผัดคะน้าเห็ดหอม + ข้าว","ข้าว/กับข้าว",520,12,16,86],
-
-    // เมนูไข่/ผักจานด่วน (171–185)
-    ["ไข่ดาว 2 ฟอง","ข้าว/กับข้าว",180,12,14,2],
-    ["ไข่ตุ๋นหมูสับ","ข้าว/กับข้าว",240,18,14,6],
-    ["ไข่เจียวกุ้งสับ","ข้าว/กับข้าว",420,22,30,10],
-    ["ผัดบร็อคโคลี่กุ้ง","ข้าว/กับข้าว",320,24,12,22],
-    ["ผัดผักรวมหมู","ข้าว/กับข้าว",380,22,14,38],
-    ["ดอกกะหล่ำผัดน้ำปลา","ข้าว/กับข้าว",200,6,12,18],
-    ["หน่อไม้ฝรั่งผัดกุ้ง","ข้าว/กับข้าว",300,22,10,22],
-    ["ผัดถั่วงอกเต้าหู้","ข้าว/กับข้าว",280,16,12,22],
-    ["แกงจืดสาหร่ายเต้าหู้หมูสับ","แกง/ต้มยำ",220,18,10,10],
-    ["ผัดกระหล่ำปลีหมูกรอบ","ข้าว/กับข้าว",520,18,34,36],
-    ["น้ำพริกอ่อง + ผัก + ข้าว","ข้าว/กับข้าว",580,22,16,88],
-    ["ผัดคะน้าหมูกรอบ","ข้าว/กับข้าว",680,20,38,70],
-    ["ไก่ผัดเม็ดมะม่วง + ข้าว","ข้าว/กับข้าว",720,28,32,88],
-    ["เนื้อผัดน้ำมันหอย + ข้าว","ข้าว/กับข้าว",680,30,24,90],
-    ["ผัดพริกแกงหมูถั่วฝักยาว + ข้าว","ข้าว/กับข้าว",700,26,28,92],
-
-    // ของหวานเพิ่ม (186–200)
-    ["แพนเค้กกล้วยน้ำผึ้ง 2 ชิ้น","ของหวาน/เบเกอรี่",420,8,12,72],
-    ["มันเชื่อม 4 ชิ้น","ของหวาน/เบเกอรี่",360,4,2,82],
-    ["ขนมถ้วย 2 กระทง","ของหวาน/เบเกอรี่",240,6,10,30],
-    ["สังขยาฟักทอง 1 ชิ้น","ของหวาน/เบเกอรี่",300,8,12,42],
-    ["กล้วยทอด 4 ชิ้น","ของหวาน/เบเกอรี่",420,6,22,54],
-    ["มันทอด/เผือกทอด 6 ชิ้น","ของหวาน/เบเกอรี่",460,6,28,50],
-    ["ครองแครงกะทิ","ของหวาน/เบเกอรี่",360,5,12,62],
-    ["เต้าฮวยน้ำขิง","ของหวาน/เบเกอรี่",180,10,4,26],
-    ["โอวัลตินภูเขาไฟ 16oz","ของว่าง/เครื่องดื่ม",360,9,8,64],
-    ["ช็อกโกแลตบานาน่าเครป","ของหวาน/เบเกอรี่",520,8,18,82],
-    ["โทสต์ฮันนี่ + ไอศกรีม","ของหวาน/เบเกอรี่",680,10,24,108],
-    ["พุดดิ้งมะพร้าวอ่อน","ของหวาน/เบเกอรี่",260,5,10,38],
-    ["เฉาก๊วยโบราณใส่น้ำเชื่อม","ของหวาน/เบเกอรี่",180,1,0,44],
-    ["บัวลอยเผือก","ของหวาน/เบเกอรี่",380,7,10,68],
-    ["รวมมิตรน้ำกะทิ","ของหวาน/เบเกอรี่",420,6,14,70]
+    ["เค้กกล้วยหอม 1 ชิ้น","ของหวาน/เบเกอรี่",280,4,10,44]
   ];
 
-  const KEY_DB = "shc_thfood_db_v2"; // bump version soผู้ใช้ได้ 100 เมนูใหม่
+  const KEY_DB = "shc_thfood_db_v2_1"; // ฐานข้อมูลใหม่ (รองรับเลือกวันที่)
   const KEY_MEAL = "shc_thfood_meal_v1";
   const KEY_HIST = "shc_thfood_hist_v1";
 
@@ -390,7 +283,7 @@
   const $ = s => document.querySelector(s);
 
   function resetFilter(){ $('#q').value=""; $('#cat').value=""; renderFood(); }
-  function resetToBase(){ if(confirm('รีเซ็ตฐานข้อมูลกลับเป็น 100 เมนูเริ่มต้น? เมนูที่คุณเพิ่มจะไม่ถูกลบ (ยังคงอยู่)')){ const customs = DB.filter(x=>!x.base); DB = BASE.map(x=>({name:x[0],cat:x[1],k:x[2],p:x[3],f:x[4],c:x[5],base:true})).concat(customs); localStorage.setItem(KEY_DB,JSON.stringify(DB)); renderFood(); renderCustoms(); updateCount(); alert('รีเซ็ตแล้ว!'); } }
+  function resetToBase(){ if(confirm('รีเซ็ตฐานข้อมูลกลับเป็นเมนูเริ่มต้น? เมนูที่คุณเพิ่มจะยังคงอยู่')){ const customs = DB.filter(x=>!x.base); DB = BASE.map(x=>({name:x[0],cat:x[1],k:x[2],p:x[3],f:x[4],c:x[5],base:true})).concat(customs); localStorage.setItem(KEY_DB,JSON.stringify(DB)); renderFood(); renderCustoms(); updateCount(); alert('รีเซ็ตแล้ว!'); } }
 
   function renderFood(){
     const q = ($('#q').value||"").trim().toLowerCase();
@@ -408,31 +301,15 @@
     updateCount();
   }
 
-  function updateCount(){
-    $('#dbCount').textContent = `มีเมนูทั้งหมด ${DB.length.toLocaleString()} รายการ`;
-  }
+  function updateCount(){ $('#dbCount').textContent = `มีเมนูทั้งหมด ${DB.length.toLocaleString()} รายการ`; }
 
-  function addToMeal(item){
-    const row = {...item, qty:1};
-    MEAL.push(row);
-    saveMeal(); renderMeal();
-  }
-  function changeQty(i,delta){
-    MEAL[i].qty = Math.max(0.25, (MEAL[i].qty||1)+delta);
-    saveMeal(); renderMeal();
-  }
+  function addToMeal(item){ const row = {...item, qty:1}; MEAL.push(row); saveMeal(); renderMeal(); }
+  function changeQty(i,delta){ MEAL[i].qty = Math.max(0.25, (MEAL[i].qty||1)+delta); saveMeal(); renderMeal(); }
   function removeMeal(i){ MEAL.splice(i,1); saveMeal(); renderMeal(); }
   function clearMeal(){ MEAL=[]; saveMeal(); renderMeal(); }
   function saveMeal(){ localStorage.setItem(KEY_MEAL, JSON.stringify(MEAL)); }
 
-  function totals(){
-    return MEAL.reduce((s,x)=>({
-      k:s.k + x.k*(x.qty||1),
-      p:s.p + x.p*(x.qty||1),
-      f:s.f + x.f*(x.qty||1),
-      c:s.c + x.c*(x.qty||1)
-    }), {k:0,p:0,f:0,c:0});
-  }
+  function totals(){ return MEAL.reduce((s,x)=>({ k:s.k + x.k*(x.qty||1), p:s.p + x.p*(x.qty||1), f:s.f + x.f*(x.qty||1), c:s.c + x.c*(x.qty||1) }), {k:0,p:0,f:0,c:0}); }
 
   function renderMeal(){
     const tb = $('#meal'); tb.innerHTML="";
@@ -460,8 +337,7 @@
   function addCustom(){
     const name = $('#nName').value.trim();
     const cat = $('#nCat').value;
-    const k = parseFloat($('#nK').value||0), p = parseFloat($('#nP').value||0),
-          f = parseFloat($('#nF').value||0), c = parseFloat($('#nC').value||0);
+    const k = parseFloat($('#nK').value||0), p = parseFloat($('#nP').value||0), f = parseFloat($('#nF').value||0), c = parseFloat($('#nC').value||0);
     if(!name || !k){ return alert('กรอกชื่อเมนูและ kcal อย่างน้อยนะคะ'); }
     const obj = {name,cat,k,p,f,c,base:false};
     DB.push(obj);
@@ -473,7 +349,7 @@
 
   function renderCustoms(){
     const tb = document.querySelector('#customTbl tbody'); tb.innerHTML='';
-    DB.filter(x=>!x.base).forEach((x,idx)=>{
+    DB.filter(x=>!x.base).forEach(x=>{
       const i = DB.indexOf(x);
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -499,7 +375,9 @@
     if(!MEAL.length) return alert('ยังไม่มีรายการในจาน');
     const t = totals();
     const detail = MEAL.map(x=>`${x.name} x${(x.qty||1).toFixed(2)}`).join(' | ');
-    const rec = {date:new Date().toISOString().slice(0,10), k:Math.round(t.k), p:Math.round(t.p), f:Math.round(t.f), c:Math.round(t.c), detail};
+    const dateInput = document.getElementById('logDate');
+    const date = (dateInput && dateInput.value) ? dateInput.value : isoLocalDate(new Date());
+    const rec = {date, k:Math.round(t.k), p:Math.round(t.p), f:Math.round(t.f), c:Math.round(t.c), detail};
     HIST.unshift(rec);
     localStorage.setItem(KEY_HIST, JSON.stringify(HIST));
     alert('บันทึกสำเร็จแล้วค่ะ');
@@ -508,49 +386,35 @@
 
   function renderHist(){
     const tb = $('#histTbl tbody'); tb.innerHTML="";
-    HIST.forEach(r=>{
+    HIST.forEach((r,idx)=>{
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${r.date}</td><td>${r.k}</td><td>${r.p}</td><td>${r.f}</td><td>${r.c}</td><td class="small">${r.detail}</td>`;
+      tr.innerHTML = `<td>${r.date}</td><td>${r.k}</td><td>${r.p}</td><td>${r.f}</td><td>${r.c}</td><td class="small">${r.detail}</td>
+        <td style="white-space:nowrap">
+          <button class=\"btn ghost\" onclick=\"editHistDate(${idx})\">แก้วัน</button>
+          <button class=\"btn danger\" onclick=\"deleteHist(${idx})\">ลบ</button>
+        </td>`;
       tb.appendChild(tr);
     });
   }
 
-  function exportCSV(){
-    if(!HIST.length) return alert('ยังไม่มีประวัติ');
-    const header = "date,kcal,protein,fat,carb,detail\n";
-    const rows = HIST.map(r=>`${r.date},${r.k},${r.p},${r.f},${r.c},"${r.detail.replace(/"/g,'""')}"`).join("\n");
-    const blob = new Blob([header+rows], {type:"text/csv;charset=utf-8;"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = "SoniaHealthyClub_meals.csv"; a.click();
-    URL.revokeObjectURL(url);
+  function editHistDate(i){
+    const cur = HIST[i].date;
+    const nv = prompt('ใส่วันที่รูปแบบ YYYY-MM-DD', cur);
+    if(!nv) return;
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(nv)) return alert('รูปแบบวันที่ไม่ถูกต้อง');
+    HIST[i].date = nv; localStorage.setItem(KEY_HIST, JSON.stringify(HIST)); renderHist();
   }
+  function deleteHist(i){ if(confirm('ลบประวัติรายการนี้?')){ HIST.splice(i,1); localStorage.setItem(KEY_HIST, JSON.stringify(HIST)); renderHist(); } }
 
-  function downloadDB(){
-    const blob = new Blob([JSON.stringify(DB,null,2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'SoniaHealthyClub_foodDB.json'; a.click();
-    URL.revokeObjectURL(url);
-  }
-  function importDB(ev){
-    const f = ev.target.files[0]; if(!f) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try{
-        const arr = JSON.parse(reader.result);
-        if(!Array.isArray(arr)) throw new Error('รูปแบบไฟล์ไม่ถูกต้อง');
-        // validate minimal fields
-        const sanitized = arr.map(x=>({name:String(x.name||''),cat:String(x.cat||'ข้าว/กับข้าว'),k:+x.k||0,p:+x.p||0,f:+x.f||0,c:+x.c||0,base:!!x.base&&x.name?true:false})).filter(x=>x.name && x.k>0);
-        if(!sanitized.length) throw new Error('ไม่พบรายการที่นำเข้าได้');
-        DB = sanitized; localStorage.setItem(KEY_DB,JSON.stringify(DB));
-        renderFood(); renderCustoms(); updateCount(); alert('นำเข้าฐานข้อมูลเรียบร้อย!');
-      }catch(e){ alert('นำเข้าไม่สำเร็จ: '+e.message); }
-      ev.target.value='';
-    };
-    reader.readAsText(f);
-  }
+  function isoLocalDate(d){ const dt = new Date(d); dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset()); return dt.toISOString().slice(0,10); }
+
+  function exportCSV(){ if(!HIST.length) return alert('ยังไม่มีประวัติ'); const header = "date,kcal,protein,fat,carb,detail\n"; const rows = HIST.map(r=>`${r.date},${r.k},${r.p},${r.f},${r.c},"${r.detail.replace(/"/g,'""')}"`).join("\n"); const blob = new Blob([header+rows], {type:"text/csv;charset=utf-8;"}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "SoniaHealthyClub_meals.csv"; a.click(); URL.revokeObjectURL(url); }
+
+  function downloadDB(){ const blob = new Blob([JSON.stringify(DB,null,2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'SoniaHealthyClub_foodDB.json'; a.click(); URL.revokeObjectURL(url); }
+  function importDB(ev){ const f = ev.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = () => { try{ const arr = JSON.parse(reader.result); if(!Array.isArray(arr)) throw new Error('รูปแบบไฟล์ไม่ถูกต้อง'); const sanitized = arr.map(x=>({name:String(x.name||''),cat:String(x.cat||'ข้าว/กับข้าว'),k:+x.k||0,p:+x.p||0,f:+x.f||0,c:+x.c||0,base:!!x.base&&x.name?true:false})).filter(x=>x.name && x.k>0); if(!sanitized.length) throw new Error('ไม่พบรายการที่นำเข้าได้'); DB = sanitized; localStorage.setItem(KEY_DB,JSON.stringify(DB)); renderFood(); renderCustoms(); updateCount(); alert('นำเข้าฐานข้อมูลเรียบร้อย!'); }catch(e){ alert('นำเข้าไม่สำเร็จ: '+e.message); } ev.target.value=''; }; reader.readAsText(f); }
 
   // init
-  renderFood(); renderMeal(); renderHist(); renderCustoms(); updateCount();
+  (function(){ const logDateEl = document.getElementById('logDate'); if(logDateEl){ logDateEl.value = isoLocalDate(new Date()); } renderFood(); renderMeal(); renderHist(); renderCustoms(); updateCount(); })();
 </script>
 </body>
 </html>
