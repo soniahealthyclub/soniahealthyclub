@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>คำนวณแคลอรี่แบบคิวท์ 🍓✨</title>
+  <style>
+    :root{
+      --bg:#fff7fb;       /* pink milk */
+      --card:#ffffff;     /* white */
+      --ink:#2a2a2a;      /* text */
+      --muted:#7a7a7a;    /* muted */
+      --accent:#ff71b8;   /* strawberry pink */
+      --accent-2:#ffd1e6; /* baby pink */
+      --good:#4caf50;     /* green */
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans Thai, "Helvetica Neue", Arial; background:var(--bg); color:var(--ink)}
+    .wrap{max-width:760px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border-radius:22px;padding:18px 18px 12px; box-shadow:0 10px 30px rgba(255,113,184,.15),0 6px 16px rgba(0,0,0,.06); position:relative; overflow:hidden}
+    .tape{position:absolute; inset:auto auto 12px -10px; transform:rotate(-2deg); background:var(--accent-2); padding:6px 16px; border-radius:10px; font-weight:700; color:#9d3d6c;}
+    h1{margin:0 0 6px; font-size:24px;}
+    p.lead{margin:0 0 12px; color:var(--muted)}
+    .row{display:grid; grid-template-columns:1fr; gap:10px;}
+    @media(min-width:720px){.row{grid-template-columns:repeat(3,1fr)}}
+    label{font-size:13px; font-weight:700; color:#9d3d6c; display:block; margin:6px 0}
+    input,select{width:100%; padding:12px 14px; border:2px solid var(--accent-2); border-radius:16px; outline:none; background:#fff}
+    input:focus,select:focus{border-color:var(--accent); box-shadow:0 0 0 4px rgba(255,113,184,.15)}
+    .btn{display:inline-block; border:0; background:var(--accent); color:#fff; padding:12px 18px; border-radius:18px; font-weight:800; cursor:pointer}
+    .btn.ghost{background:#fff; color:#9d3d6c; border:2px dashed var(--accent-2)}
+    .stack{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px}
+    .note{font-size:12px; color:var(--muted)}
+    .results{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
+    .box{background:linear-gradient(180deg,#fff, #fff6fa); border:2px dashed var(--accent-2); border-radius:18px; padding:12px; text-align:center}
+    .kawaii{font-size:20px}
+    .big{font-size:22px; font-weight:900}
+    .sub{font-size:12px; color:var(--muted)}
+    .footer{margin-top:12px; font-size:12px; color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="tape">🍓 Cute Cal Counter</div>
+      <h1>คำนวณแคลอรี่แบบคิวท์ ✨</h1>
+      <p class="lead">สูตร <strong>Mifflin–St Jeor</strong> + ตัวคูณกิจกรรม คิดเป้าแคลอรี่และมาโครอัตโนมัติ 🧮</p>
+
+      <div class="row">
+        <div>
+          <label>เพศ</label>
+          <select id="sex"><option value="female">หญิง</option><option value="male">ชาย</option></select>
+        </div>
+        <div>
+          <label>อายุ (ปี)</label>
+          <input id="age" type="number" value="30" min="10" max="100" />
+        </div>
+        <div>
+          <label>ส่วนสูง (ซม.)</label>
+          <input id="height" type="number" value="161" min="120" max="220" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:6px">
+        <div>
+          <label>น้ำหนัก (กก.)</label>
+          <input id="weight" type="number" value="63.5" step="0.1" min="30" max="250" />
+        </div>
+        <div>
+          <label>กิจกรรม</label>
+          <select id="activity">
+            <option value="1.2">เบามาก (นั่งทำงาน)</option>
+            <option value="1.375">น้อย (1–3 วัน/สัปดาห์)</option>
+            <option value="1.55">ปานกลาง (3–5 วัน/สัปดาห์)</option>
+            <option value="1.725">หนัก (6–7 วัน/สัปดาห์)</option>
+            <option value="1.9">หนักมาก (งานแรง/วันละ 2 ครั้ง)</option>
+          </select>
+        </div>
+        <div>
+          <label>เป้าหมาย</label>
+          <select id="goal">
+            <option value="maintain">คงน้ำหนัก</option>
+            <option value="cut">ลดไขมัน (~−15%)</option>
+            <option value="recomp">รีคอม (~−10%)</option>
+            <option value="bulk">เพิ่มกล้ามเนื้อ (~+10%)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:6px">
+        <div>
+          <label>โปรตีน (กรัม/กก.)</label>
+          <input id="ppk" type="number" value="1.8" step="0.1" />
+        </div>
+        <div>
+          <label>ไขมัน (% แคลอรี่)</label>
+          <input id="fatpct" type="number" value="30" step="1" />
+        </div>
+        <div>
+          <label>คาร์บ</label>
+          <input disabled value="คิดจากส่วนที่เหลืออัตโนมัติ" />
+        </div>
+      </div>
+
+      <div class="stack">
+        <button class="btn kawaii" onclick="calc()">คำนวณ ⭐</button>
+        <button class="btn ghost" onclick="saveP()">บันทึกโปรไฟล์</button>
+        <button class="btn ghost" onclick="loadP()">ดึงโปรไฟล์</button>
+        <span class="note">ข้อมูลเก็บในเครื่องของคุณเอง (localStorage)</span>
+      </div>
+
+      <div class="results">
+        <div class="box">
+          <div class="sub">BMR</div>
+          <div class="big" id="bmr">—</div>
+          <div class="sub">kcal/วัน</div>
+        </div>
+        <div class="box">
+          <div class="sub">TDEE</div>
+          <div class="big" id="tdee">—</div>
+          <div class="sub">kcal/วัน</div>
+        </div>
+        <div class="box">
+          <div class="sub">แคลอรี่เป้าหมาย</div>
+          <div class="big" id="target">—</div>
+          <div class="sub" id="goalnote">เลือกเป้าหมายด้านบน</div>
+        </div>
+        <div class="box">
+          <div class="sub">โปรตีน / ไขมัน / คาร์บ</div>
+          <div class="big" id="macro">—</div>
+          <div class="sub">กรัม/วัน</div>
+        </div>
+      </div>
+
+      <div class="footer">หมายเหตุ: เป็นเครื่องมือให้ข้อมูลทั่วไป ไม่แทนคำแนะนำจากแพทย์/นักกำหนดอาหาร 💖</div>
+    </div>
+  </div>
+
+  <script>
+    function calc(){
+      const sex = val('sex');
+      const age = num('age');
+      const h = num('height'); // cm
+      const w = num('weight'); // kg
+      const act = parseFloat(val('activity')||'1.2');
+      const goal = val('goal');
+      const ppk = clamp(parseFloat(val('ppk')||'1.8'), 1.0, 3.0);
+      const fatpct = clamp(parseFloat(val('fatpct')||'30'), 10, 60);
+
+      // BMR: Mifflin–St Jeor
+      let bmr = 10*w + 6.25*h - 5*age + (sex==='female'? -161 : 5);
+      let tdee = bmr * act;
+
+      let adj = 0, note = 'คงน้ำหนัก';
+      if(goal==='cut'){ adj = -0.15; note='ลดไขมัน ~−15%'; }
+      else if(goal==='recomp'){ adj = -0.10; note='รีคอม ~−10%'; }
+      else if(goal==='bulk'){ adj = +0.10; note='เพิ่มกล้ามเนื้อ ~+10%'; }
+
+      const target = tdee * (1+adj);
+
+      const p_g = ppk * w;       // 4 kcal
+      const p_k = p_g * 4;
+      const f_k = target * (fatpct/100);
+      const f_g = f_k / 9;       // 9 kcal
+      const c_k = Math.max(0, target - p_k - f_k);
+      const c_g = c_k / 4;       // 4 kcal
+
+      set('bmr', round(bmr));
+      set('tdee', round(tdee));
+      set('target', round(target));
+      setText('goalnote', note);
+      setText('macro', `${round(p_g)}g / ${round(f_g)}g / ${round(c_g)}g`);
+    }
+
+    function saveP(){
+      const ids=['sex','age','height','weight','activity','goal','ppk','fatpct'];
+      const data={}; ids.forEach(id=> data[id]=val(id));
+      localStorage.setItem('cuteCalProfile', JSON.stringify(data));
+      alert('บันทึกโปรไฟล์ไว้ในเครื่องนี้แล้วค่ะ ✨');
+    }
+    function loadP(){
+      const raw=localStorage.getItem('cuteCalProfile');
+      if(!raw) return alert('ยังไม่มีโปรไฟล์ที่บันทึกไว้');
+      try{ const data=JSON.parse(raw); Object.entries(data).forEach(([k,v])=>{ const el=document.getElementById(k); if(el) el.value=v; }); calc(); }
+      catch(e){ alert('โหลดโปรไฟล์ไม่ได้'); }
+    }
+
+    // helpers
+    const val=id=> document.getElementById(id).value;
+    const num=id=> parseFloat(val(id)||'0');
+    const set=(id,x)=> setText(id, Number(x).toLocaleString());
+    function setText(id, t){ document.getElementById(id).textContent = t; }
+    const clamp=(x,lo,hi)=> Math.min(hi, Math.max(lo, x));
+    const round=x=> Math.round(x);
+
+    window.addEventListener('load', ()=>{ calc(); });
+  </script>
+</body>
+</html>
