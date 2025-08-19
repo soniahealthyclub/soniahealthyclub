@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>คำนวณแคลอรี่แบบคิวท์ 🍓✨</title>
+  <title>Sonia Healthy Club | คำนวณแคลอรี่แบบคิวท์ 🍓✨</title>
   <style>
     :root{
       --bg:#fff7fb;       /* pink milk */
@@ -17,15 +17,29 @@
     *{box-sizing:border-box}
     body{margin:0;font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans Thai, "Helvetica Neue", Arial; background:var(--bg); color:var(--ink)}
     .wrap{max-width:760px;margin:24px auto;padding:0 16px}
-    .card{background:var(--card);border-radius:22px;padding:18px 18px 12px; box-shadow:0 10px 30px rgba(255,113,184,.15),0 6px 16px rgba(0,0,0,.06); position:relative; overflow:hidden}
-    .tape{position:absolute; inset:auto auto 12px -10px; transform:rotate(-2deg); background:var(--accent-2); padding:6px 16px; border-radius:10px; font-weight:700; color:#9d3d6c;}
-    h1{margin:0 0 6px; font-size:24px;}
+    .card{
+      background:var(--card);
+      border-radius:22px;
+      padding:18px 18px 24px; /* เพิ่มก้นการ์ดไม่ให้ทับฟุตเตอร์ */
+      box-shadow:0 10px 30px rgba(255,113,184,.15),0 6px 16px rgba(0,0,0,.06);
+      position:relative; overflow:hidden
+    }
+    .tape{
+      position:absolute;
+      inset:10px auto auto -10px; /* ย้ายไปมุมบนซ้าย เพื่อไม่บังด้านล่าง */
+      transform:rotate(-2deg);
+      background:var(--accent-2);
+      padding:6px 16px; border-radius:10px; font-weight:700; color:#9d3d6c;
+      pointer-events:none;
+    }
+    h1{margin:32px 0 6px; font-size:24px;}
     p.lead{margin:0 0 12px; color:var(--muted)}
     .row{display:grid; grid-template-columns:1fr; gap:10px;}
     @media(min-width:720px){.row{grid-template-columns:repeat(3,1fr)}}
     label{font-size:13px; font-weight:700; color:#9d3d6c; display:block; margin:6px 0}
     input,select{width:100%; padding:12px 14px; border:2px solid var(--accent-2); border-radius:16px; outline:none; background:#fff}
     input:focus,select:focus{border-color:var(--accent); box-shadow:0 0 0 4px rgba(255,113,184,.15)}
+    .helper{font-size:12px; color:var(--muted); margin-top:6px; line-height:1.5}
     .btn{display:inline-block; border:0; background:var(--accent); color:#fff; padding:12px 18px; border-radius:18px; font-weight:800; cursor:pointer}
     .btn.ghost{background:#fff; color:#9d3d6c; border:2px dashed var(--accent-2)}
     .stack{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px}
@@ -35,14 +49,14 @@
     .kawaii{font-size:20px}
     .big{font-size:22px; font-weight:900}
     .sub{font-size:12px; color:var(--muted)}
-    .footer{margin-top:12px; font-size:12px; color:var(--muted)}
+    .footer{margin-top:14px; font-size:12px; color:var(--muted)}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
-      <div class="tape">🍓 Cute Cal Counter</div>
-      <h1>คำนวณแคลอรี่แบบคิวท์ ✨</h1>
+      <div class="tape">🍓 Sonia Healthy Club</div>
+      <h1>Sonia Healthy Club — คำนวณแคลอรี่แบบคิวท์ ✨</h1>
       <p class="lead">สูตร <strong>Mifflin–St Jeor</strong> + ตัวคูณกิจกรรม คิดเป้าแคลอรี่และมาโครอัตโนมัติ 🧮</p>
 
       <div class="row">
@@ -66,14 +80,18 @@
           <input id="weight" type="number" value="63.5" step="0.1" min="30" max="250" />
         </div>
         <div>
-          <label>กิจกรรม</label>
+          <label>กิจกรรม/ระดับการออกกำลังกาย</label>
           <select id="activity">
             <option value="1.2">เบามาก (นั่งทำงาน)</option>
-            <option value="1.375">น้อย (1–3 วัน/สัปดาห์)</option>
+            <option value="1.375">น้อย (ออกกำลัง 1–3 วัน/สัปดาห์)</option>
             <option value="1.55">ปานกลาง (3–5 วัน/สัปดาห์)</option>
             <option value="1.725">หนัก (6–7 วัน/สัปดาห์)</option>
             <option value="1.9">หนักมาก (งานแรง/วันละ 2 ครั้ง)</option>
           </select>
+          <div class="helper">
+            คำอธิบายระดับ: เบามาก=แทบไม่ขยับ, น้อย=เดิน/เวทเบา, ปานกลาง=คาร์ดิโอ/เวทสลับ, 
+            หนัก=ซ้อมจริงจังเกือบทุกวัน, หนักมาก=งานใช้แรงหรือฝึกวันละ 2 ครั้ง
+          </div>
         </div>
         <div>
           <label>เป้าหมาย</label>
@@ -83,6 +101,10 @@
             <option value="recomp">รีคอม (~−10%)</option>
             <option value="bulk">เพิ่มกล้ามเนื้อ (~+10%)</option>
           </select>
+          <div class="helper">
+            <strong>รีคอม (Recomposition)</strong> = ปรับร่างกายให้ไขมันลดลงเล็กน้อยพร้อมกับมวลกล้ามเพิ่มขึ้น
+            โดยรวมแคลอรี่ติดลบเล็กน้อย (~10%) เน้นโปรตีนพอเหมาะ + ฝึกเวทสม่ำเสมอ เหมาะกับผู้เริ่มต้น/กลับมาเริ่มใหม่
+          </div>
         </div>
       </div>
 
@@ -131,7 +153,9 @@
         </div>
       </div>
 
-      <div class="footer">หมายเหตุ: เป็นเครื่องมือให้ข้อมูลทั่วไป ไม่แทนคำแนะนำจากแพทย์/นักกำหนดอาหาร 💖</div>
+      <div class="footer">
+        หมายเหตุ: เป็นเครื่องมือให้ข้อมูลทั่วไป ไม่แทนคำแนะนำจากแพทย์/นักกำหนดอาหาร 💖
+      </div>
     </div>
   </div>
 
@@ -174,14 +198,17 @@
     function saveP(){
       const ids=['sex','age','height','weight','activity','goal','ppk','fatpct'];
       const data={}; ids.forEach(id=> data[id]=val(id));
-      localStorage.setItem('cuteCalProfile', JSON.stringify(data));
+      localStorage.setItem('shcCalProfile', JSON.stringify(data)); // เปลี่ยนชื่อ key ให้เข้ากับแบรนด์
       alert('บันทึกโปรไฟล์ไว้ในเครื่องนี้แล้วค่ะ ✨');
     }
     function loadP(){
-      const raw=localStorage.getItem('cuteCalProfile');
+      const raw=localStorage.getItem('shcCalProfile') || localStorage.getItem('cuteCalProfile'); // รองรับคีย์เก่า
       if(!raw) return alert('ยังไม่มีโปรไฟล์ที่บันทึกไว้');
-      try{ const data=JSON.parse(raw); Object.entries(data).forEach(([k,v])=>{ const el=document.getElementById(k); if(el) el.value=v; }); calc(); }
-      catch(e){ alert('โหลดโปรไฟล์ไม่ได้'); }
+      try{
+        const data=JSON.parse(raw);
+        Object.entries(data).forEach(([k,v])=>{ const el=document.getElementById(k); if(el) el.value=v; });
+        calc();
+      }catch(e){ alert('โหลดโปรไฟล์ไม่ได้'); }
     }
 
     // helpers
