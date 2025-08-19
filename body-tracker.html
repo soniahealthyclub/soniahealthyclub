@@ -3,336 +3,160 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Sonia Healthy Club | Body Measurement Tracker</title>
+  <title>Sonia Healthy Club | Body Tracker</title>
   <style>
-    :root{
-      --bg:#fff7fb;       /* pink milk */
-      --card:#ffffff;     /* white */
-      --ink:#2a2a2a;      /* text */
-      --muted:#7a7a7a;    /* muted */
-      --accent:#ff71b8;   /* strawberry pink */
-      --accent-2:#ffd1e6; /* baby pink */
-      --good:#4caf50;     /* green */
-      --warn:#ff8a65;     /* orange-ish */
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:ui-rounded,system-ui,-apple-system,Segoe UI,Roboto,Noto Sans Thai,Arial;background:var(--bg);color:var(--ink)}
-    .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
-    .card{background:var(--card);border-radius:22px;padding:20px;box-shadow:0 10px 30px rgba(255,113,184,.15),0 6px 16px rgba(0,0,0,.06)}
-    h1{margin:0 0 6px;font-size:24px}
-    .lead{margin:0 0 14px;color:var(--muted)}
-    .grid{display:grid;gap:10px}
-    @media(min-width:920px){.grid{grid-template-columns:repeat(4,1fr)}}
-    label{font-size:13px;font-weight:700;color:#9d3d6c;display:block;margin:4px 0}
-    input,select{width:100%;padding:10px 12px;border:2px solid var(--accent-2);border-radius:14px;background:#fff;outline:none}
-    input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(255,113,184,.15)}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
-    .btn{border:0;background:var(--accent);color:#fff;padding:10px 16px;border-radius:16px;font-weight:800;cursor:pointer}
-    .btn.ghost{background:#fff;color:#9d3d6c;border:2px dashed var(--accent-2)}
-    .btn.alt{background:#4caf50}
-    .box{border:2px dashed var(--accent-2);border-radius:18px;padding:12px;background:linear-gradient(180deg,#fff,#fff6fa)}
-    .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
-    .big{font-size:26px;font-weight:900}
-    .sub{font-size:12px;color:var(--muted)}
-    .ok{color:var(--good);font-weight:800}
-    .warn{color:var(--warn);font-weight:800}
-    .chart{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:140px;margin-top:6px}
-    .bar{background:#ffdbea;border-radius:8px 8px 0 0;position:relative}
-    .bar::after{content:attr(data-v);position:absolute;left:50%;transform:translateX(-50%);bottom:100%;font-size:11px;color:var(--muted)}
-    .barlbl{font-size:11px;color:var(--muted);text-align:center;margin-top:2px}
-    .row-logs{margin-top:14px;overflow:auto}
-    table{width:100%;border-collapse:separate;border-spacing:0 8px}
-    th,td{padding:10px 12px;background:#fff;border:2px dashed var(--accent-2);vertical-align:top}
-    th{background:#fff6fa;text-align:left}
-    .delta{font-size:12px;color:var(--muted)}
-    @media print{.toolbar{display:none}.card{box-shadow:none}}
+    body{margin:0;font-family:'Prompt',sans-serif;background:#fff0f6;color:#333}
+    .wrap{max-width:900px;margin:20px auto;padding:20px}
+    h1{text-align:center;color:#ff4da6}
+    .card{background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;
+          box-shadow:0 6px 12px rgba(255,0,128,0.1)}
+    label{display:block;margin:8px 0 4px}
+    input{width:100%;padding:8px;border:1px solid #ccc;border-radius:8px}
+    button{background:#ff4da6;color:#fff;border:0;padding:10px 18px;border-radius:8px;cursor:pointer;font-weight:600}
+    button:hover{background:#e60073}
+    table{width:100%;border-collapse:collapse;margin-top:15px;font-size:14px}
+    th,td{border:1px solid #f9cce0;padding:6px;text-align:center}
+    th{background:#ffe6f0}
+    .btn-group{margin:10px 0;text-align:center}
+    .btn-group button{margin:4px}
+    .sub{font-weight:bold;margin-bottom:10px;color:#ff4da6}
   </style>
 </head>
 <body>
   <div class="wrap">
+    <h1>Body Measurement Tracker 📏</h1>
+
     <div class="card">
-      <h1>Body Measurement Tracker 📏</h1>
-      <p class="lead">บันทึกสัดส่วนสำคัญ (เอว สะโพก หน้าอก ต้นขา ต้นแขน น้ำหนัก) — ระบบคำนวณ WHR/WHtR ให้และสรุปแนวโน้ม 7 ครั้งล่าสุด (ข้อมูลเก็บในเครื่องของคุณ)</p>
+      <label>วันที่</label>
+      <input type="date" id="date">
+      <label>น้ำหนัก (กก.)</label>
+      <input type="number" id="weight" step="0.1">
+      <label>เอว (ซม.)</label>
+      <input type="number" id="waist" step="0.1">
+      <label>สะโพก (ซม.)</label>
+      <input type="number" id="hip" step="0.1">
+      <label>หน้าอก (ซม.)</label>
+      <input type="number" id="chest" step="0.1">
+      <label>ต้นขา (ซม.)</label>
+      <input type="number" id="thigh" step="0.1">
+      <label>ต้นแขน (ซม.)</label>
+      <input type="number" id="arm" step="0.1">
 
-      <!-- FORM -->
-      <div class="grid">
-        <div>
-          <label>วันที่</label>
-          <input id="date" type="date"/>
-        </div>
-        <div>
-          <label>ส่วนสูง (ซม.)</label>
-          <input id="height" type="number" min="120" max="220" step="0.1" value="163"/>
-        </div>
-        <div>
-          <label>น้ำหนัก (กก.)</label>
-          <input id="weight" type="number" min="30" max="250" step="0.1" value="64.0"/>
-        </div>
-        <div>
-          <label>รอบเอว (ซม.)</label>
-          <input id="waist" type="number" min="40" max="160" step="0.1" value="75.0"/>
-        </div>
+      <div class="btn-group">
+        <button onclick="save()">บันทึกข้อมูลวันนี้ ⭐</button>
+        <button onclick="clearAll()">ล้างข้อมูลทั้งหมด</button>
+        <button onclick="exportCSV()">Export CSV</button>
       </div>
+    </div>
 
-      <div class="grid" style="margin-top:6px">
-        <div>
-          <label>รอบสะโพก (ซม.)</label>
-          <input id="hip" type="number" min="60" max="180" step="0.1" value="96.0"/>
-        </div>
-        <div>
-          <label>รอบหน้าอก (ซม.)</label>
-          <input id="chest" type="number" min="60" max="140" step="0.1" value="86.0"/>
-        </div>
-        <div>
-          <label>รอบต้นขา (ซม.)</label>
-          <input id="thigh" type="number" min="35" max="90" step="0.1" value="52.0"/>
-        </div>
-        <div>
-          <label>รอบต้นแขน (ซม.)</label>
-          <input id="arm" type="number" min="18" max="50" step="0.1" value="27.0"/>
-        </div>
-      </div>
+    <div class="card">
+      <div class="sub">ค่าอัตราส่วนล่าสุด</div>
+      <p>WHR (เอว/สะโพก): <span id="whr">-</span></p>
+      <p>WHtR (เอว/ส่วนสูง*): <span id="whtr">-</span></p>
+      <small>*ต้องกรอกส่วนสูงในโค้ดเองนะคะ (แก้ได้ใน script)</small>
+    </div>
 
-      <div class="toolbar">
-        <button class="btn" onclick="save()">บันทึกข้อมูลวันนี้ ⭐</button>
-        <button class="btn ghost" onclick="resetAll()">ล้างข้อมูลทั้งหมด</button>
-        <button class="btn alt" onclick="exportCSV()">Export CSV</button>
-        <div id="calc" class="sub"></div>
-      </div>
+    <div class="card">
+      <div class="sub">แนวโน้ม 7 ครั้งล่าสุด (เอว • น้ำหนัก • สะโพก)</div>
+      <canvas id="lineChart" height="140"></canvas>
+    </div>
 
-      <!-- KPIs -->
-      <div class="kpi">
-        <div class="box" style="text-align:center">
-          <div class="sub">WHR (เอว/สะโพก)</div>
-          <div id="whr" class="big">—</div>
-          <div id="whrNote" class="sub"></div>
-        </div>
-        <div class="box" style="text-align:center">
-          <div class="sub">WHtR (เอว/ส่วนสูง)</div>
-          <div id="whtr" class="big">—</div>
-          <div id="whtrNote" class="sub"></div>
-        </div>
-        <div class="box" style="text-align:center">
-          <div class="sub">เอว เทียบครั้งก่อน</div>
-          <div id="dWaist" class="big">—</div>
-          <div class="sub">(ซม.)</div>
-        </div>
-        <div class="box" style="text-align:center">
-          <div class="sub">น้ำหนัก เทียบครั้งก่อน</div>
-          <div id="dWeight" class="big">—</div>
-          <div class="sub">(กก.)</div>
-        </div>
-      </div>
-
-      <!-- MINI CHARTS -->
-      <div class="box" style="margin-top:10px">
-        <div class="sub">แนวโน้ม 7 ครั้งล่าสุด (เอว • น้ำหนัก • สะโพก)</div>
-        <div class="chart" id="chart"></div>
-        <div id="chartLabels" class="row" style="grid-template-columns:repeat(7,1fr);gap:8px;margin-top:4px"></div>
-      </div>
-
-      <!-- LOG TABLE -->
-      <div class="row-logs">
-        <table>
-          <thead>
-            <tr>
-              <th>วันที่</th>
-              <th>น้ำหนัก</th>
-              <th>เอว</th>
-              <th>สะโพก</th>
-              <th>WHR</th>
-              <th>WHtR</th>
-              <th>หน้าอก/ต้นขา/ต้นแขน</th>
-            </tr>
-          </thead>
-          <tbody id="logs"></tbody>
-        </table>
-      </div>
-
-      <p class="sub" style="margin-top:8px">
-        เคล็ดลับ: วัดตำแหน่งเดิมทุกครั้ง (เช่น เอวที่ระดับสะดือ), วัดตอนเช้าหลังเข้าห้องน้ำ และจดทุก 1–2 สัปดาห์เพื่อดูแนวโน้มค่ะ 💖
-      </p>
+    <div class="card">
+      <div class="sub">ประวัติการบันทึก</div>
+      <table id="table">
+        <thead>
+          <tr>
+            <th>วันที่</th><th>น้ำหนัก</th><th>เอว</th><th>สะโพก</th>
+            <th>WHR</th><th>WHtR</th><th>หน้าอก/ต้นขา/ต้นแขน</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
 
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const KEY = "shc_body_tracker_v1";
-    const $ = id => document.getElementById(id);
-    const fmt1 = n => (Math.round(n*10)/10).toFixed(1);
-
-    function todayISO(){
-      const d = new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
-      return d.toISOString().slice(0,10);
-    }
-
-    function loadAll(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }catch{ return []; } }
-    function saveAll(arr){ localStorage.setItem(KEY, JSON.stringify(arr)); }
-
-    function calcDerived(h, w, waist, hip){
-      const whr  = (hip>0)   ? waist/hip   : null;
-      const whtr = (h>0)     ? waist/(h)   : null; // ทั้งหมดเป็นซม.
-      return {whr, whtr};
-    }
-    function whrNote(v){
-      if(v==null) return "";
-      // เกณฑ์คร่าว ๆ ผู้หญิง: ต่ำกว่า ~0.80 ดี, 0.80–0.85 ปานกลาง, >0.85 สูง
-      if(v<0.80) return "ดีมาก (ต่ำกว่า ~0.80)";
-      if(v<0.85) return "ปานกลาง (~0.80–0.85)";
-      return "สูง (>0.85)";
-    }
-    function whtrNote(v){
-      if(v==null) return "";
-      // ผู้ใหญ่: <0.5 ดี, 0.5–0.6 ปานกลาง, >0.6 สูง
-      if(v<0.5) return "ดี (<0.50)";
-      if(v<=0.6) return "ปานกลาง (0.50–0.60)";
-      return "สูง (>0.60)";
-    }
-
-    function previewCalc(){
-      const h = parseFloat($("height").value||0);
-      const waist = parseFloat($("waist").value||0);
-      const hip = parseFloat($("hip").value||0);
-      const weight = parseFloat($("weight").value||0);
-      const {whr, whtr} = calcDerived(h, weight, waist, hip);
-      $("whr").textContent = whr? fmt1(whr) : "—";
-      $("whtr").textContent = whtr? fmt1(whtr) : "—";
-      $("whrNote").textContent = whr? whrNote(whr): "";
-      $("whtrNote").textContent = whtr? whtrNote(whtr): "";
-      $("calc").textContent = (whr&&whtr)? `พรีวิว: WHR ~ ${fmt1(whr)}, WHtR ~ ${fmt1(whtr)}` : "";
-    }
+    let data = JSON.parse(localStorage.getItem("bodyData")||"[]");
 
     function save(){
-      const date = $("date").value || todayISO();
-      const h = parseFloat($("height").value||0);
-      const weight = parseFloat($("weight").value||0);
-      const waist = parseFloat($("waist").value||0);
-      const hip = parseFloat($("hip").value||0);
-      const chest = parseFloat($("chest").value||0);
-      const thigh = parseFloat($("thigh").value||0);
-      const arm = parseFloat($("arm").value||0);
-
-      if(!(h && waist && hip)) {
-        return alert("กรอกอย่างน้อย ส่วนสูง/เอว/สะโพก ให้ครบก่อนนะคะ");
-      }
-
-      let data = loadAll();
-      data = data.filter(x=>x.date!==date);
-      data.push({date,h,weight,waist,hip,chest,thigh,arm});
-      data.sort((a,b)=> b.date.localeCompare(a.date)); // ใหม่→เก่า
-      saveAll(data);
+      const obj = {
+        date: document.getElementById('date').value || new Date().toISOString().slice(0,10),
+        weight: parseFloat(document.getElementById('weight').value)||0,
+        waist: parseFloat(document.getElementById('waist').value)||0,
+        hip: parseFloat(document.getElementById('hip').value)||0,
+        chest: parseFloat(document.getElementById('chest').value)||0,
+        thigh: parseFloat(document.getElementById('thigh').value)||0,
+        arm: parseFloat(document.getElementById('arm').value)||0
+      };
+      data.push(obj);
+      localStorage.setItem("bodyData",JSON.stringify(data));
       render();
     }
 
-    function resetAll(){
-      if(!confirm("ลบข้อมูลสัดส่วนทั้งหมดในเครื่องนี้?")) return;
-      localStorage.removeItem(KEY);
-      render();
+    function clearAll(){
+      if(confirm("ล้างข้อมูลทั้งหมด?")){
+        data=[];localStorage.removeItem("bodyData");render();
+      }
     }
 
     function exportCSV(){
-      const data = loadAll().slice().reverse(); // เก่า→ใหม่
-      const header = ["date","height_cm","weight_kg","waist_cm","hip_cm","chest_cm","thigh_cm","arm_cm","WHR","WHtR"];
-      const rows = [header.join(",")];
+      if(!data.length) return alert("ไม่มีข้อมูล");
+      let csv="วันที่,น้ำหนัก,เอว,สะโพก,หน้าอก,ต้นขา,ต้นแขน\\n";
       data.forEach(r=>{
-        const {whr,whtr} = calcDerived(r.h??r.height, r.weight, r.waist, r.hip);
-        rows.push([
-          r.date, r.h??r.height, r.weight, r.waist, r.hip, r.chest, r.thigh, r.arm,
-          whr?fmt1(whr):"", whtr?fmt1(whtr):""
-        ].join(","));
+        csv+=`${r.date},${r.weight},${r.waist},${r.hip},${r.chest},${r.thigh},${r.arm}\\n`;
       });
-      const blob = new Blob([rows.join("\n")], {type:"text/csv;charset=utf-8;"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = "SoniaHealthyClub_body_measurements.csv";
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const blob=new Blob([csv],{type:"text/csv"});
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(blob);a.download="body-tracker.csv";a.click();
     }
 
     function render(){
-      const data = loadAll();
-
-      // คำนวณพรีวิวตามฟอร์ม
-      previewCalc();
-
-      // เปรียบเทียบกับครั้งก่อน (เอนทรีล่าสุด 2 อัน)
-      const latest = data[0], prev = data[1];
-      if(latest && prev){
-        const dW = latest.weight && prev.weight ? latest.weight - prev.weight : null;
-        const dWa = latest.waist && prev.waist ? latest.waist - prev.waist : null;
-        $("dWeight").textContent = dW==null ? "—" : (dW>0?`+${fmt1(dW)}`:fmt1(dW));
-        $("dWaist").textContent  = dWa==null ? "—" : (dWa>0?`+${fmt1(dWa)}`:fmt1(dWa));
-      }else{
-        $("dWeight").textContent = $("dWaist").textContent = "—";
-      }
-
-      // ตารางบันทึก
-      const tb = $("logs"); tb.innerHTML="";
-      data.forEach(r=>{
-        const {whr,whtr} = calcDerived(r.h??r.height, r.weight, r.waist, r.hip);
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${r.date}</td>
-          <td>${r.weight?fmt1(r.weight):"—"} <span class="delta">${r.weight?"กก.":""}</span></td>
-          <td>${r.waist?fmt1(r.waist):"—"} <span class="delta">${r.waist?"ซม.":""}</span></td>
-          <td>${r.hip?fmt1(r.hip):"—"} <span class="delta">${r.hip?"ซม.":""}</span></td>
-          <td>${whr?fmt1(whr):"—"}</td>
-          <td>${whtr?fmt1(whtr):"—"}</td>
-          <td>
-            ${r.chest?`หน้าอก ${fmt1(r.chest)} ซม.`:"—"}
-            ${r.thigh?` • ต้นขา ${fmt1(r.thigh)} ซม.`:""}
-            ${r.arm?` • ต้นแขน ${fmt1(r.arm)} ซม.`:""}
-          </td>`;
-        tb.appendChild(tr);
+      const tbody=document.querySelector("#table tbody");
+      tbody.innerHTML="";
+      data.slice().reverse().forEach(r=>{
+        const whr = r.hip? (r.waist/r.hip).toFixed(2):"-";
+        const whtr = 160? (r.waist/160).toFixed(2):"-"; // สมมติส่วนสูง 160 ซม.
+        tbody.innerHTML+=`
+          <tr>
+            <td>${r.date}</td><td>${r.weight}</td><td>${r.waist}</td><td>${r.hip}</td>
+            <td>${whr}</td><td>${whtr}</td>
+            <td>อก ${r.chest} • ขา ${r.thigh} • แขน ${r.arm}</td>
+          </tr>`;
       });
 
-      // มินิชาร์ต 7 ครั้งล่าสุด (เอว/น้ำหนัก/สะโพก)
-      const last7 = data.slice(0,7).reverse(); // เก่า→ใหม่
-      const chart = $("chart"); chart.innerHTML="";
-      const labels = $("chartLabels"); labels.innerHTML="";
-      if(last7.length){
-        // สเกลรวมจากค่ามากสุดของเอว/น้ำหนัก/สะโพก เพื่อที่บาร์ไม่ล้น
-        const maxVal = Math.max(
-          ...last7.map(x=>x.waist||0),
-          ...last7.map(x=>x.weight||0),
-          ...last7.map(x=>x.hip||0),
-          1
-        );
-        last7.forEach(x=>{
-          const wrap = document.createElement("div");
-          wrap.style.display="grid";
-          wrap.style.gridTemplateRows="1fr auto";
-          const stack = document.createElement("div");
-          stack.style.display="grid";
-          stack.style.gridTemplateColumns="repeat(3,1fr)";
-          stack.style.gap="3px";
-          // 3 bars: waist (pink), weight (gray-ish), hip (light)
-          const mk = (val,label)=>{
-            const b = document.createElement("div");
-            b.className="bar";
-            b.style.height = `${(Math.max(0,val)/maxVal)*100}%`;
-            b.dataset.v = val?fmt1(val):"";
-            return b;
-          };
-          stack.appendChild(mk(x.waist,"W"));
-          const bw = mk(x.weight,"Kg"); bw.style.background="#e9e9f0"; stack.appendChild(bw);
-          const bh = mk(x.hip,"H"); bh.style.background="#ffeaf3"; stack.appendChild(bh);
-          wrap.appendChild(stack);
-          const lab = document.createElement("div");
-          lab.className="barlbl";
-          lab.textContent = (x.date||"").slice(5).replace("-","/");
-          wrap.appendChild(lab);
-          chart.appendChild(wrap);
-        });
+      if(data.length){
+        const last=data[data.length-1];
+        document.getElementById('whr').innerText = last.hip? (last.waist/last.hip).toFixed(2):"-";
+        document.getElementById('whtr').innerText = 160? (last.waist/160).toFixed(2):"-";
       }
+
+      const last7=data.slice(-7);
+      if(last7.length) renderLineChart(last7);
     }
 
-    // init
-    window.addEventListener("load", ()=>{
-      $("date").value = todayISO();
-      ["height","weight","waist","hip"].forEach(id=> $(id).addEventListener("input", previewCalc));
-      render();
-    });
+    function renderLineChart(last7){
+      const ctx=document.getElementById('lineChart').getContext('2d');
+      if(window.myChart) window.myChart.destroy();
+      window.myChart=new Chart(ctx,{
+        type:'line',
+        data:{
+          labels:last7.map(x=>x.date),
+          datasets:[
+            {label:'เอว (ซม.)',data:last7.map(x=>x.waist),
+             borderColor:'#ff71b8',backgroundColor:'#ffd6ec',fill:false,tension:0.3},
+            {label:'น้ำหนัก (กก.)',data:last7.map(x=>x.weight),
+             borderColor:'#999',backgroundColor:'#ddd',fill:false,tension:0.3},
+            {label:'สะโพก (ซม.)',data:last7.map(x=>x.hip),
+             borderColor:'#b37aff',backgroundColor:'#e5d4ff',fill:false,tension:0.3}
+          ]
+        },
+        options:{plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:false}}}
+      });
+    }
+
+    render();
   </script>
 </body>
 </html>
