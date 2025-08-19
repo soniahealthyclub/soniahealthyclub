@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sonia Healthy Club | Meal Planner</title>
+  <style>
+    body{margin:0;font-family:'Prompt',sans-serif;background:#fff7f9;color:#333}
+    .wrap{max-width:900px;margin:20px auto;padding:20px}
+    h1{text-align:center;color:#ff4da6}
+    .card{background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;
+          box-shadow:0 6px 12px rgba(255,0,128,0.1)}
+    label{display:block;margin:8px 0 4px}
+    input,select{width:100%;padding:8px;border:1px solid #ccc;border-radius:8px}
+    button{background:#ff4da6;color:#fff;border:0;padding:10px 18px;border-radius:8px;cursor:pointer;font-weight:600}
+    button:hover{background:#e60073}
+    table{width:100%;border-collapse:collapse;margin-top:15px;font-size:14px}
+    th,td{border:1px solid #f9cce0;padding:6px;text-align:center}
+    th{background:#ffe6f0}
+    .btn-group{text-align:center;margin:15px 0}
+    .btn-group button{margin:4px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Meal Planner 🍜</h1>
+
+    <div class="card">
+      <label>วันที่</label>
+      <input type="date" id="date">
+
+      <label>มื้อเช้า</label>
+      <select id="breakfast">
+        <option>โจ๊กหมูใส่ไข่</option>
+        <option>ข้าวต้มปลา</option>
+        <option>ขนมปังปิ้ง + ไข่ลวก</option>
+        <option>เกาเหลาไก่</option>
+      </select>
+
+      <label>มื้อกลางวัน</label>
+      <select id="lunch">
+        <option>ข้าวกะเพราไก่ไข่ดาว</option>
+        <option>ส้มตำ + ไก่ย่าง + ข้าวเหนียว</option>
+        <option>ข้าวผัดกุ้ง</option>
+        <option>ก๋วยเตี๋ยวเรือ</option>
+      </select>
+
+      <label>อาหารว่าง</label>
+      <select id="snack">
+        <option>ผลไม้รวม (แตงโม/มะละกอ/กล้วย)</option>
+        <option>นมถั่วเหลือง</option>
+        <option>โยเกิร์ตไขมันต่ำ</option>
+        <option>ถั่วอบ</option>
+      </select>
+
+      <label>มื้อเย็น</label>
+      <select id="dinner">
+        <option>ต้มยำกุ้ง + ข้าวสวย</option>
+        <option>แกงส้มชะอมกุ้ง</option>
+        <option>ปลาเผา + น้ำจิ้มซีฟู้ด</option>
+        <option>สุกี้น้ำไก่</option>
+      </select>
+
+      <div class="btn-group">
+        <button onclick="save()">บันทึกเมนูวันนี้ ⭐</button>
+        <button onclick="clearAll()">ล้างข้อมูลทั้งหมด</button>
+        <button onclick="exportCSV()">Export CSV</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>แผนอาหารที่บันทึก</h3>
+      <table id="table">
+        <thead>
+          <tr>
+            <th>วันที่</th>
+            <th>มื้อเช้า</th>
+            <th>กลางวัน</th>
+            <th>ว่าง</th>
+            <th>เย็น</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let meals = JSON.parse(localStorage.getItem("meals")||"[]");
+
+    function save(){
+      const obj = {
+        date: document.getElementById('date').value || new Date().toISOString().slice(0,10),
+        breakfast: document.getElementById('breakfast').value,
+        lunch: document.getElementById('lunch').value,
+        snack: document.getElementById('snack').value,
+        dinner: document.getElementById('dinner').value
+      };
+      meals.push(obj);
+      localStorage.setItem("meals",JSON.stringify(meals));
+      render();
+    }
+
+    function clearAll(){
+      if(confirm("ล้างข้อมูลทั้งหมด?")){
+        meals=[];localStorage.removeItem("meals");render();
+      }
+    }
+
+    function exportCSV(){
+      if(!meals.length) return alert("ไม่มีข้อมูล");
+      let csv="วันที่,มื้อเช้า,กลางวัน,ว่าง,เย็น\n";
+      meals.forEach(r=>{
+        csv+=`${r.date},${r.breakfast},${r.lunch},${r.snack},${r.dinner}\n`;
+      });
+      const blob=new Blob([csv],{type:"text/csv"});
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(blob);a.download="meal-planner.csv";a.click();
+    }
+
+    function render(){
+      const tbody=document.querySelector("#table tbody");
+      tbody.innerHTML="";
+      meals.slice().reverse().forEach(r=>{
+        tbody.innerHTML+=`
+          <tr>
+            <td>${r.date}</td>
+            <td>${r.breakfast}</td>
+            <td>${r.lunch}</td>
+            <td>${r.snack}</td>
+            <td>${r.dinner}</td>
+          </tr>`;
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>
