@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sonia Healthy Club | Weekly Workout Planner</title>
+  <style>
+    :root{
+      --bg:#fff7fb;       /* pink milk */
+      --card:#ffffff;     /* white */
+      --ink:#2a2a2a;      /* text */
+      --muted:#7a7a7a;    /* muted */
+      --accent:#ff71b8;   /* strawberry pink */
+      --accent-2:#ffd1e6; /* baby pink */
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-rounded,system-ui,-apple-system,Segoe UI,Roboto,Noto Sans Thai,Arial;
+         background:var(--bg);color:var(--ink)}
+    .wrap{max-width:1000px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border-radius:22px;padding:20px;
+          box-shadow:0 10px 30px rgba(255,113,184,.15),0 6px 16px rgba(0,0,0,.06)}
+    h1{margin:0 0 6px;font-size:24px}
+    .lead{margin:0 0 14px;color:var(--muted)}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 12px}
+    .btn{border:0;background:var(--accent);color:#fff;padding:10px 16px;border-radius:16px;font-weight:800;cursor:pointer}
+    .btn.ghost{background:#fff;color:#9d3d6c;border:2px dashed var(--accent-2)}
+    .table{width:100%;border-collapse:separate;border-spacing:0 10px}
+    th,td{padding:12px;background:#fff;border:2px dashed var(--accent-2)}
+    th{background:#fff6fa;text-align:left}
+    .day{width:110px;font-weight:800}
+    .task{display:flex;gap:10px;align-items:center;margin:6px 0}
+    .small{font-size:12px;color:var(--muted)}
+    .note{width:100%;padding:10px;border:2px solid var(--accent-2);border-radius:12px}
+    @media print{
+      .toolbar{display:none}
+      body{background:#fff}
+      .card{box-shadow:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>ตารางออกกำลังกายประจำสัปดาห์</h1>
+      <p class="lead">ติ๊กเช็กกิจกรรมแต่ละวัน + เขียนโน้ตสั้น ๆ — ระบบจะบันทึกไว้ในเครื่องของคุณอัตโนมัติ</p>
+
+      <div class="toolbar">
+        <button class="btn" onclick="resetWeek()">รีเซ็ตสัปดาห์</button>
+        <button class="btn ghost" onclick="window.print()">พิมพ์/บันทึก PDF</button>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="day">วัน</th>
+            <th>ภารกิจ</th>
+            <th>โน้ต/แผนสำหรับวันนี้</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+
+      <p class="small">
+        แนวทางแนะนำ: เลือกอย่างน้อย 2 ภารกิจ/วัน เช่น คาร์ดิโอ 20–30 นาที + ยืดเหยียด 10 นาที หรือเวท/แรงต้าน 30 นาที
+        — ฟังร่างกายและพักให้เพียงพอด้วยนะคะ 💖
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const DAYS = ["จันทร์","อังคาร","พุธ","พฤหัสฯ","ศุกร์","เสาร์","อาทิตย์"];
+    const TASKS = [
+      { id:"cardio",   label:"คาร์ดิโอ 20–30 นาที" },
+      { id:"strength", label:"เวท/แรงต้าน 30 นาที" },
+      { id:"stretch",  label:"ยืดเหยียด 10 นาที"   },
+      { id:"steps",    label:"ก้าวเดินครบ 8,000+"  },
+      { id:"water",    label:"น้ำ 6–8 แก้ว"        }
+    ];
+    const KEY = "shc_weekly_planner_v1";
+
+    function makeRow(dayIndex){
+      const tr = document.createElement("tr");
+
+      const tdDay = document.createElement("td");
+      tdDay.className = "day";
+      tdDay.textContent = DAYS[dayIndex];
+      tr.appendChild(tdDay);
+
+      const tdTasks = document.createElement("td");
+      TASKS.forEach(t=>{
+        const id = `${t.id}_${dayIndex}`;
+        const wrap = document.createElement("label");
+        wrap.className = "task";
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.id = id;
+        cb.addEventListener("change", save);
+        const span = document.createElement("span");
+        span.textContent = t.label;
+        wrap.appendChild(cb); wrap.appendChild(span);
+        tdTasks.appendChild(wrap);
+      });
+      tr.appendChild(tdTasks);
+
+      const tdNote = document.createElement("td");
+      const note = document.createElement("textarea");
+      note.className = "note";
+      note.rows = 2;
+      note.placeholder = "เช่น วิ่งช้า 25 นาที + เวทช่วงล่าง";
+      note.id = `note_${dayIndex}`;
+      note.addEventListener("input", save);
+      tdNote.appendChild(note);
+      tr.appendChild(tdNote);
+
+      return tr;
+    }
+
+    function build(){
+      const tb = document.getElementById("tbody");
+      tb.innerHTML = "";
+      for(let i=0;i<DAYS.length;i++) tb.appendChild(makeRow(i));
+      load();
+    }
+
+    function load(){
+      try{
+        const data = JSON.parse(localStorage.getItem(KEY) || "{}");
+        Object.entries(data).forEach(([k,v])=>{
+          const el = document.getElementById(k);
+          if(!el) return;
+          if(el.type === "checkbox") el.checked = !!v;
+          else el.value = v;
+        });
+      }catch{}
+    }
+
+    function save(){
+      const data = {};
+      for(let i=0;i<DAYS.length;i++){
+        TASKS.forEach(t=>{
+          const id = `${t.id}_${i}`;
+          const el = document.getElementById(id);
+          data[id] = !!el?.checked;
+        });
+        const nt = document.getElementById(`note_${i}`);
+        data[`note_${i}`] = nt?.value || "";
+      }
+      localStorage.setItem(KEY, JSON.stringify(data));
+    }
+
+    function resetWeek(){
+      localStorage.removeItem(KEY);
+      build();
+    }
+
+    window.addEventListener("load", build);
+  </script>
+</body>
+</html>
