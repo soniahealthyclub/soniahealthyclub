@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sonia Healthy Club | Sleep Quality Log</title>
+  <style>
+    :root{
+      --bg:#fff7fb;       /* pink milk */
+      --card:#ffffff;     /* white */
+      --ink:#2a2a2a;      /* text */
+      --muted:#7a7a7a;    /* muted */
+      --accent:#ff71b8;   /* strawberry pink */
+      --accent-2:#ffd1e6; /* baby pink */
+      --good:#4caf50;     /* green */
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-rounded,system-ui,-apple-system,Segoe UI,Roboto,Noto Sans Thai,Arial;background:var(--bg);color:var(--ink)}
+    .wrap{max-width:1000px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border-radius:22px;padding:20px;box-shadow:0 10px 30px rgba(255,113,184,.15),0 6px 16px rgba(0,0,0,.06)}
+    h1{margin:0 0 6px;font-size:24px}
+    .lead{margin:0 0 14px;color:var(--muted)}
+    .grid{display:grid;gap:10px}
+    @media(min-width:860px){.grid{grid-template-columns:repeat(4,1fr)}}
+    label{font-size:13px;font-weight:700;color:#9d3d6c;display:block;margin:4px 0}
+    input,select,textarea{width:100%;padding:10px 12px;border:2px solid var(--accent-2);border-radius:14px;background:#fff;outline:none}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(255,113,184,.15)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btn{border:0;background:var(--accent);color:#fff;padding:12px 18px;border-radius:18px;font-weight:800;cursor:pointer}
+    .btn.ghost{background:#fff;color:#9d3d6c;border:2px dashed var(--accent-2)}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+    .box{border:2px dashed var(--accent-2);border-radius:18px;padding:12px;background:linear-gradient(180deg,#fff,#fff6fa)}
+    .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+    .big{font-size:26px;font-weight:900}
+    .sub{font-size:12px;color:var(--muted)}
+    .chart{display:flex;gap:8px;align-items:flex-end;height:140px;margin-top:6px}
+    .bar{flex:1;background:#ffdbea;border-radius:10px 10px 0 0;position:relative}
+    .bar::after{content:attr(data-h) "h";position:absolute;left:50%;transform:translateX(-50%);bottom:100%;font-size:12px;color:var(--muted)}
+    .bar-label{font-size:12px;color:var(--muted);text-align:center;margin-top:4px}
+    .row-logs{margin-top:14px;overflow:auto}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    th,td{padding:10px 12px;background:#fff;border:2px dashed var(--accent-2)}
+    th{background:#fff6fa;text-align:left}
+    .ok{color:var(--good);font-weight:800}
+    @media print{.toolbar{display:none}.card{box-shadow:none}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Sleep Quality Log 🌙</h1>
+      <p class="lead">บันทึกเวลานอน–ตื่น คุณภาพการนอน และโน้ตสั้น ๆ — ระบบจะคำนวณชั่วโมงนอนและสรุปรายสัปดาห์ให้อัตโนมัติ</p>
+
+      <!-- FORM -->
+      <div class="grid">
+        <div>
+          <label>วันที่</label>
+          <input id="date" type="date"/>
+        </div>
+        <div>
+          <label>เข้านอน (เช่น 22:45)</label>
+          <input id="bed" type="time" value="22:30"/>
+        </div>
+        <div>
+          <label>ตื่นนอน (เช่น 06:30)</label>
+          <input id="wake" type="time" value="06:30"/>
+        </div>
+        <div>
+          <label>งีบระหว่างวัน (นาที)</label>
+          <input id="nap" type="number" min="0" step="5" value="0"/>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <div>
+          <label>คุณภาพการนอน</label>
+          <select id="quality">
+            <option value="5">ยอดเยี่ยม 😴✨</option>
+            <option value="4" selected>ดีมาก 😊</option>
+            <option value="3">พอใช้ 🙂</option>
+            <option value="2">น้อย 😵</option>
+            <option value="1">แย่ 🥱</option>
+          </select>
+        </div>
+        <div>
+          <label>เป้าหมายชั่วโมงนอน/คืน</label>
+          <select id="target">
+            <option>7.0</option><option selected>8.0</option><option>8.5</option><option>9.0</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:10px">
+        <label>โน้ต</label>
+        <textarea id="note" rows="2" placeholder="เช่น อ่านหนังสือก่อนนอน หลับสนิท ไม่มีตื่นกลางดึก"></textarea>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn" onclick="save()">บันทึกวันนี้ ⭐</button>
+        <button class="btn ghost" onclick="print()">พิมพ์/บันทึก PDF</button>
+        <button class="btn ghost" onclick="resetAll()">ล้างข้อมูลทั้งหมด</button>
+        <div id="calc" class="sub"></div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi">
+        <div class="box" style="text-align:center">
+          <div class="sub">เฉลี่ยชั่วโมงนอน (7 วัน)</div>
+          <div id="avgH" class="big">—</div>
+        </div>
+        <div class="box" style="text-align:center">
+          <div class="sub">คุณภาพเฉลี่ย (1–5)</div>
+          <div id="avgQ" class="big">—</div>
+        </div>
+        <div class="box" style="text-align:center">
+          <div class="sub">คืนที่ถึงเป้าหมาย</div>
+          <div id="hit" class="big">—</div>
+        </div>
+      </div>
+
+      <!-- CHART -->
+      <div class="box" style="margin-top:10px">
+        <div class="sub">สรุป 7 คืนล่าสุด</div>
+        <div id="chart" class="chart"></div>
+        <div id="chartLabels" class="row" style="grid-template-columns:repeat(7,1fr);gap:8px;margin-top:4px"></div>
+      </div>
+
+      <!-- LOG TABLE -->
+      <div class="row-logs">
+        <table>
+          <thead>
+            <tr><th>วันที่</th><th>นอน</th><th>ตื่น</th><th>ชั่วโมง</th><th>งีบ</th><th>คุณภาพ</th><th>โน้ต</th></tr>
+          </thead>
+          <tbody id="logs"></tbody>
+        </table>
+      </div>
+
+      <p class="sub" style="margin-top:8px">
+        เคล็ดลับ: วางมือถือให้ห่างเตียง 1 เมตร ปิดจออย่างน้อย 30 นาที ก่อนนอน และรักษาเวลาตื่นให้คงที่ทุกวัน 💖
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const KEY = "shc_sleep_log_v1";
+
+    // --- helpers ---
+    const $ = id => document.getElementById(id);
+    const fmtH = h => (Math.round(h*10)/10).toFixed(1);
+
+    function todayISO(){
+      const d = new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+      return d.toISOString().slice(0,10);
+    }
+
+    function parseHM(s){ // "22:30" -> minutes
+      if(!s || !s.includes(":")) return null;
+      const [hh,mm] = s.split(":").map(Number);
+      return hh*60 + mm;
+    }
+
+    function calcHours(){
+      const b = parseHM($("bed").value);
+      const w = parseHM($("wake").value);
+      const nap = Math.max(0, parseInt($("nap").value||0,10));
+      if(b==null || w==null) return null;
+      let dur = w - b;
+      if(dur < 0) dur += 24*60;      // ข้ามเที่ยงคืน
+      const hours = (dur + nap)/60;  // รวมงีบ
+      return hours;
+    }
+
+    function loadAll(){
+      try{ return JSON.parse(localStorage.getItem(KEY) || "[]"); }catch{ return []; }
+    }
+    function saveAll(arr){
+      localStorage.setItem(KEY, JSON.stringify(arr));
+    }
+
+    function save(){
+      const date = $("date").value || todayISO();
+      const bed = $("bed").value, wake = $("wake").value;
+      const nap = Math.max(0, parseInt($("nap").value||0,10));
+      const q = parseInt($("quality").value,10);
+      const note = $("note").value.trim();
+      const hours = calcHours();
+      if(hours==null) return alert("กรอกเวลาเข้านอน/ตื่นนอนให้ครบก่อนนะคะ");
+
+      let data = loadAll();
+      // ถ้ามีรายการวันที่นี้อยู่แล้ว ให้ทับ
+      data = data.filter(x=>x.date!==date);
+      data.push({date, bed, wake, nap, q, note, hours});
+      // เรียงจากใหม่ไปเก่า
+      data.sort((a,b)=> b.date.localeCompare(a.date));
+      saveAll(data);
+      $("calc").textContent = `ชั่วโมงรวมวันนี้ ~ ${fmtH(hours)} h`;
+      render();
+    }
+
+    function resetAll(){
+      if(!confirm("ลบข้อมูลการนอนทั้งหมดในเครื่องนี้?")) return;
+      localStorage.removeItem(KEY);
+      render();
+    }
+
+    function render(){
+      const data = loadAll();
+
+      // ตาราง
+      const tbody = $("logs"); tbody.innerHTML="";
+      data.forEach(r=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.date}</td>
+          <td>${r.bed}</td>
+          <td>${r.wake}</td>
+          <td><span class="${r.hours>=parseFloat($("target").value)?'ok':''}">${fmtH(r.hours)}</span></td>
+          <td>${r.nap||0} นาที</td>
+          <td>${r.q}</td>
+          <td>${(r.note||'').replace(/</g,'&lt;')}</td>`;
+        tbody.appendChild(tr);
+      });
+
+      // KPIs จาก 7 คืนล่าสุด
+      const last7 = data.slice(0,7);
+      if(last7.length){
+        const avgH = last7.reduce((s,x)=>s+x.hours,0)/last7.length;
+        const avgQ = last7.reduce((s,x)=>s+x.q,0)/last7.length;
+        const tgt = parseFloat($("target").value)||8;
+        const hit = last7.filter(x=>x.hours>=tgt).length;
+        $("avgH").textContent = fmtH(avgH);
+        $("avgQ").textContent = (Math.round(avgQ*10)/10).toFixed(1);
+        $("hit").textContent = `${hit}/${last7.length}`;
+      }else{
+        $("avgH").textContent = $("avgQ").textContent = $("hit").textContent = "—";
+      }
+
+      // แผนภูมิแท่ง (สเกล 10 ชั่วโมง)
+      const chart = $("chart"); chart.innerHTML="";
+      const labels = $("chartLabels"); labels.innerHTML="";
+      const maxH = 10;
+      last7.slice().reverse().forEach(x=>{
+        const h = Math.min(maxH, x.hours);
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        bar.style.height = `${(h/maxH)*100}%`;
+        bar.dataset.h = fmtH(x.hours);
+        chart.appendChild(bar);
+
+        const lab = document.createElement("div");
+        lab.className = "bar-label";
+        lab.textContent = x.date.slice(5).replace("-","/"); // MM/DD
+        labels.appendChild(lab);
+      });
+    }
+
+    // init
+    window.addEventListener("load", ()=>{
+      $("date").value = todayISO();
+      const hours = calcHours();
+      if(hours) $("calc").textContent = `ประมาณ ${fmtH(hours)} ชั่วโมง`;
+      ["bed","wake","nap","quality","target","date"].forEach(id=>{
+        $(id).addEventListener("change", ()=>{
+          const h = calcHours();
+          $("calc").textContent = h==null ? "" : `ประมาณ ${fmtH(h)} ชั่วโมง`;
+          render(); // อัปเดต KPI ตามเป้าหมาย
+        });
+      });
+      render();
+    });
+  </script>
+</body>
+</html>
