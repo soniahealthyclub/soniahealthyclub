@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sonia Healthy Club | คำนวณแคลอรี่แบบคิวท์ 🍓✨</title>
+  <title>Sonia Healthy Club | คำนวณแคลอรี่แบบคิวท์ 🍓✨ (Preset + โหมดขั้นสูง)</title>
   <style>
     :root{
       --bg:#fff7fb;       /* pink milk */
@@ -26,7 +26,7 @@
     }
     .tape{
       position:absolute;
-      inset:10px auto auto -10px; /* ย้ายไปมุมบนซ้าย เพื่อไม่บังด้านล่าง */
+      inset:10px auto auto -10px; /* มุมบนซ้าย */
       transform:rotate(-2deg);
       background:var(--accent-2);
       padding:6px 16px; border-radius:10px; font-weight:700; color:#9d3d6c;
@@ -57,8 +57,9 @@
     <div class="card">
       <div class="tape">🍓 Sonia Healthy Club</div>
       <h1>Sonia Healthy Club — คำนวณแคลอรี่แบบคิวท์ ✨</h1>
-      <p class="lead">สูตร <strong>Mifflin–St Jeor</strong> + ตัวคูณกิจกรรม คิดเป้าแคลอรี่และมาโครอัตโนมัติ 🧮</p>
+      <p class="lead">สูตร <strong>Mifflin–St Jeor</strong> + ตัวคูณกิจกรรม + ค่ามาโครแนะนำอัตโนมัติ พร้อมโหมดขั้นสูงกรอกเองได้ 🧮</p>
 
+      <!-- กลุ่ม 1: เพศ อายุ ส่วนสูง -->
       <div class="row">
         <div>
           <label>เพศ</label>
@@ -74,6 +75,7 @@
         </div>
       </div>
 
+      <!-- กลุ่ม 2: น้ำหนัก กิจกรรม เป้าหมาย -->
       <div class="row" style="margin-top:6px">
         <div>
           <label>น้ำหนัก (กก.)</label>
@@ -102,27 +104,53 @@
             <option value="bulk">เพิ่มกล้ามเนื้อ (~+10%)</option>
           </select>
           <div class="helper">
-            <strong>รีคอม (Recomposition)</strong> = ปรับร่างกายให้ไขมันลดลงเล็กน้อยพร้อมกับมวลกล้ามเพิ่มขึ้น
-            โดยรวมแคลอรี่ติดลบเล็กน้อย (~10%) เน้นโปรตีนพอเหมาะ + ฝึกเวทสม่ำเสมอ เหมาะกับผู้เริ่มต้น/กลับมาเริ่มใหม่
+            <strong>รีคอม (Recomposition)</strong> = ไขมันลดลงเล็กน้อยพร้อมมวลกล้ามเพิ่มขึ้น
+            แคลอรี่ติดลบเล็กน้อย (~10%) + ฝึกเวทสม่ำเสมอ เหมาะกับผู้เริ่มต้น/กลับมาเริ่มใหม่
           </div>
         </div>
       </div>
 
+      <!-- กลุ่ม 3: โปรตีน/ไขมัน แบบ Preset + โหมดขั้นสูง -->
       <div class="row" style="margin-top:6px">
         <div>
-          <label>โปรตีน (กรัม/กก.)</label>
-          <input id="ppk" type="number" value="1.8" step="0.1" />
+          <label>โปรตีน (กรัม/กก.) <span class="sub" id="ppkHint">อัตโนมัติ</span></label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="ppkPreset" style="flex:1">
+              <option value="auto">แนะนำอัตโนมัติจากเป้าหมาย</option>
+              <option value="1.4">1.4 g/กก. (ทั่วไป)</option>
+              <option value="1.6">1.6 g/กก. (คงน้ำหนัก/เพิ่มกล้าม)</option>
+              <option value="1.8">1.8 g/กก. (ลดไขมัน/รีคอม)</option>
+              <option value="2.0">2.0 g/กก. (ซ้อมหนัก)</option>
+            </select>
+            <input id="ppk" type="number" value="1.8" step="0.1" min="1.0" max="3.0" style="width:110px" disabled>
+          </div>
         </div>
+
         <div>
-          <label>ไขมัน (% แคลอรี่)</label>
-          <input id="fatpct" type="number" value="30" step="1" />
+          <label>ไขมัน (% แคลอรี่) <span class="sub" id="fatHint">อัตโนมัติ</span></label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="fatPreset" style="flex:1">
+              <option value="auto">แนะนำอัตโนมัติจากเป้าหมาย</option>
+              <option value="25">25% (เน้นโปรตีน/คาร์บ)</option>
+              <option value="30" selected>30% (สมดุล)</option>
+              <option value="35">35% (ชอบไขมันสูง)</option>
+            </select>
+            <input id="fatpct" type="number" value="30" step="1" min="15" max="45" style="width:110px" disabled>
+          </div>
         </div>
+
         <div>
-          <label>คาร์บ</label>
-          <input disabled value="คิดจากส่วนที่เหลืออัตโนมัติ" />
+          <label>การตั้งค่า</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <label style="display:flex;gap:6px;align-items:center">
+              <input id="advToggle" type="checkbox"> โหมดขั้นสูง (กรอกเอง)
+            </label>
+          </div>
+          <div class="helper">ปิดโหมดขั้นสูง = ใช้ค่าที่แนะนำจากเป้าหมายโดยอัตโนมัติ</div>
         </div>
       </div>
 
+      <!-- ปุ่มและผลลัพธ์ -->
       <div class="stack">
         <button class="btn kawaii" onclick="calc()">คำนวณ ⭐</button>
         <button class="btn ghost" onclick="saveP()">บันทึกโปรไฟล์</button>
@@ -160,6 +188,47 @@
   </div>
 
   <script>
+    // ===== ค่าที่แนะนำอัตโนมัติ =====
+    function recommendedPPK(goal){            // กรัม/กก.
+      if (goal==='cut' || goal==='recomp') return 1.8;
+      if (goal==='bulk') return 1.6;
+      return 1.6; // maintain
+    }
+    function recommendedFatPct(goal){         // % แคลอรี่
+      if (goal==='cut') return 25;
+      if (goal==='recomp') return 30;
+      if (goal==='bulk') return 30;
+      return 30; // maintain
+    }
+
+    // ===== โหมดขั้นสูง/อัตโนมัติ =====
+    const adv = () => document.getElementById('advToggle').checked;
+    function syncControls(){
+      const isAdv = adv();
+      const goal = document.getElementById('goal').value;
+      const ppkAuto = recommendedPPK(goal);
+      const fatAuto = recommendedFatPct(goal);
+
+      const ppkPreset = document.getElementById('ppkPreset').value;
+      const fatPreset = document.getElementById('fatPreset').value;
+      const ppkEl = document.getElementById('ppk');
+      const fatEl = document.getElementById('fatpct');
+
+      // เปิดปิดช่องตัวเลข
+      ppkEl.disabled = !isAdv && (ppkPreset==='auto');
+      fatEl.disabled = !isAdv && (fatPreset==='auto');
+
+      // ถ้าไม่ใช่ขั้นสูง และเลือก auto → ใส่ค่าที่แนะนำ
+      if (!isAdv){
+        ppkEl.value = (ppkPreset==='auto' ? ppkAuto : ppkPreset);
+        fatEl.value = (fatPreset==='auto' ? fatAuto : fatPreset);
+      }
+
+      document.getElementById('ppkHint').textContent = (isAdv? 'กำหนดเอง' : (ppkPreset==='auto'?'อัตโนมัติ':'กำหนดเอง'));
+      document.getElementById('fatHint').textContent = (isAdv? 'กำหนดเอง' : (fatPreset==='auto'?'อัตโนมัติ':'กำหนดเอง'));
+    }
+
+    // ===== คำนวณหลัก =====
     function calc(){
       const sex = val('sex');
       const age = num('age');
@@ -167,8 +236,18 @@
       const w = num('weight'); // kg
       const act = parseFloat(val('activity')||'1.2');
       const goal = val('goal');
-      const ppk = clamp(parseFloat(val('ppk')||'1.8'), 1.0, 3.0);
-      const fatpct = clamp(parseFloat(val('fatpct')||'30'), 10, 60);
+
+      // ค่าโปรตีน/ไขมัน
+      let ppkVal = parseFloat(val('ppk'));
+      let fatpctVal = parseFloat(val('fatpct'));
+      if (!adv()){
+        const ppkPreset = val('ppkPreset');
+        const fatPreset = val('fatPreset');
+        ppkVal = (ppkPreset==='auto') ? recommendedPPK(goal) : parseFloat(ppkPreset);
+        fatpctVal = (fatPreset==='auto') ? recommendedFatPct(goal) : parseFloat(fatPreset);
+      }
+      const ppk = clamp(ppkVal, 1.0, 3.0);
+      const fatpct = clamp(fatpctVal, 15, 45);
 
       // BMR: Mifflin–St Jeor
       let bmr = 10*w + 6.25*h - 5*age + (sex==='female'? -161 : 5);
@@ -178,48 +257,59 @@
       if(goal==='cut'){ adj = -0.15; note='ลดไขมัน ~−15%'; }
       else if(goal==='recomp'){ adj = -0.10; note='รีคอม ~−10%'; }
       else if(goal==='bulk'){ adj = +0.10; note='เพิ่มกล้ามเนื้อ ~+10%'; }
-
       const target = tdee * (1+adj);
 
-      const p_g = ppk * w;       // 4 kcal
+      // คำนวณมาโคร
+      const p_g = ppk * w;       // 4 kcal/g
       const p_k = p_g * 4;
       const f_k = target * (fatpct/100);
-      const f_g = f_k / 9;       // 9 kcal
+      const f_g = f_k / 9;       // 9 kcal/g
       const c_k = Math.max(0, target - p_k - f_k);
-      const c_g = c_k / 4;       // 4 kcal
+      const c_g = c_k / 4;       // 4 kcal/g
 
       set('bmr', round(bmr));
       set('tdee', round(tdee));
       set('target', round(target));
-      setText('goalnote', note);
+      setText('goalnote', note + (adv() ? ' • โหมดขั้นสูง' : ' • โหมดอัตโนมัติ'));
       setText('macro', `${round(p_g)}g / ${round(f_g)}g / ${round(c_g)}g`);
     }
 
+    // ===== โปรไฟล์ (LocalStorage) =====
     function saveP(){
-      const ids=['sex','age','height','weight','activity','goal','ppk','fatpct'];
+      const ids=['sex','age','height','weight','activity','goal','ppkPreset','fatPreset','ppk','fatpct','advToggle'];
       const data={}; ids.forEach(id=> data[id]=val(id));
-      localStorage.setItem('shcCalProfile', JSON.stringify(data)); // เปลี่ยนชื่อ key ให้เข้ากับแบรนด์
+      localStorage.setItem('shcCalProfile_v2', JSON.stringify(data));
       alert('บันทึกโปรไฟล์ไว้ในเครื่องนี้แล้วค่ะ ✨');
     }
     function loadP(){
-      const raw=localStorage.getItem('shcCalProfile') || localStorage.getItem('cuteCalProfile'); // รองรับคีย์เก่า
+      const raw=localStorage.getItem('shcCalProfile_v2') || localStorage.getItem('shcCalProfile') || localStorage.getItem('cuteCalProfile');
       if(!raw) return alert('ยังไม่มีโปรไฟล์ที่บันทึกไว้');
       try{
         const data=JSON.parse(raw);
         Object.entries(data).forEach(([k,v])=>{ const el=document.getElementById(k); if(el) el.value=v; });
+        // ถ้าเคยเปิดโหมดขั้นสูง
+        const advEl=document.getElementById('advToggle');
+        if(data.advToggle!==undefined) advEl.checked = (data.advToggle==='on' || data.advToggle===true || data.advToggle==='true');
+        syncControls();
         calc();
       }catch(e){ alert('โหลดโปรไฟล์ไม่ได้'); }
     }
 
-    // helpers
-    const val=id=> document.getElementById(id).value;
+    // ===== helpers =====
+    const val=id=>{ const el=document.getElementById(id); if(!el) return ''; if(el.type==='checkbox') return el.checked? 'on':'off'; return el.value; };
     const num=id=> parseFloat(val(id)||'0');
     const set=(id,x)=> setText(id, Number(x).toLocaleString());
-    function setText(id, t){ document.getElementById(id).textContent = t; }
+    function setText(id, t){ const el=document.getElementById(id); if(el) el.textContent = t; }
     const clamp=(x,lo,hi)=> Math.min(hi, Math.max(lo, x));
     const round=x=> Math.round(x);
 
-    window.addEventListener('load', ()=>{ calc(); });
+    // ===== events =====
+    ['goal','ppkPreset','fatPreset','advToggle','sex','age','height','weight','activity'].forEach(id=>{
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', ()=>{ syncControls(); calc(); });
+    });
+
+    window.addEventListener('load', ()=>{ syncControls(); calc(); });
   </script>
 </body>
 </html>
