@@ -311,7 +311,7 @@ function dayRow(dayIdx){
 
   // List of items
   const list = document.createElement('div'); list.className='exlist'; list.id = `list_${dayIdx}`; tdProg.appendChild(list);
-  renderDayList(dayIdx);
+ renderDayList(dayIdx, list);
 
   tr.appendChild(tdProg);
 
@@ -323,12 +323,22 @@ function dayRow(dayIdx){
   return tr;
 }
 
-function renderDayList(dayIdx){
-  const list = document.getElementById(`list_${dayIdx}`); list.innerHTML='';
+function renderDayList(dayIdx, el){
+  const list = el || document.getElementById(`list_${dayIdx}`);
+  if(!list){ return; } // ยังไม่ถูก mount บน DOM
+
+  list.innerHTML = '';
   const items = PLAN[dayIdx].items || [];
-  if(!items.length){ const p = document.createElement('div'); p.className='small'; p.textContent='ยังไม่มีรายการ ลองเลือก Preset หรือเพิ่มท่าด้านบน'; list.appendChild(p); return; }
-  items.forEach((it, idx)=> list.appendChild(exRow(dayIdx, idx, it)) );
+  if(!items.length){
+    const p = document.createElement('div');
+    p.className = 'small';
+    p.textContent = 'ยังไม่มีรายการ ลองเลือก Preset หรือเพิ่มท่าด้านบน';
+    list.appendChild(p);
+    return;
+  }
+  items.forEach((it, idx)=> list.appendChild(exRow(dayIdx, idx, it)));
 }
+
 
 function exRow(dayIdx, idx, it){
   const div = document.createElement('div'); div.className='exrow';
