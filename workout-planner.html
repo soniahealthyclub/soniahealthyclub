@@ -254,7 +254,7 @@ const TEMPLATES = {
 const SPLITS = {
   fatloss: {
     3: ["fullBody45","cardioCore","fullBody45"],
-    4: ["upperPush","lowerA","upperPull","cardioCore"].map(alias=>({upperPush:"pushHyper",upperPull:"pullHyper"}[alias]||alias),),
+    4: ["pushHyper","lowerA","pullHyper","cardioCore"],
     5: ["pushHyper","lowerA","hiit","pullHyper","briskRun"],
     6: ["pushHyper","legsQuads","pullHyper","legsHinge","hiit","briskRun"]
   },
@@ -417,7 +417,8 @@ function applyTemplate(dayIdx, key){ if(!key) return; const t = TEMPLATES[key]; 
   }); PLAN[dayIdx].items = items; savePlan(); renderDayList(dayIdx); if(swapped) toast(`${swapped} ท่าถูกสลับเพราะอุปกรณ์ไม่พร้อม`); }
 
 function suggestSplit(goal, days){
-  const g = SPLITS[goal]||SPLITS.recomp; return (g[days]||g[4]);
+  const g = SPLITS[goal] || SPLITS.recomp; const plan = (g && g[days]) || (SPLITS.recomp && SPLITS.recomp[4]);
+  return plan || ["fullBody45","lowerA","pullStrength","lowerB"]; // hard fallback
 }
 
 function generateWeek(){
@@ -444,26 +445,27 @@ function ge(id){ const el=document.getElementById(id); return !!(el && el.checke
 // Home Only toggle
 let _prevEquipState=null;
 const homeToggle = document.getElementById('homeOnly');
-homeToggle.addEventListener('change', ()=>{
-  if(homeToggle.checked){
-    _prevEquipState = {
-      body:document.getElementById('eq_body').checked,
-      db:document.getElementById('eq_db').checked,
-      kb:document.getElementById('eq_kb').checked,
-      band:document.getElementById('eq_band').checked,
-      bb:document.getElementById('eq_bb').checked,
-      cable:document.getElementById('eq_cable').checked,
-      machine:document.getElementById('eq_machine').checked,
-      trx:document.getElementById('eq_trx').checked,
-      cardio:document.getElementById('eq_cardio').checked,
-    };
-    setEquip({body:true,db:true,kb:true,band:true,bb:false,cable:false,machine:false,trx:false,cardio:false}, true);
-  }else{
-    if(_prevEquipState){ setEquip(_prevEquipState, false); }
-  }
-  // Auto-swap across all days if enabled
-  if(document.getElementById('autoSwap').checked){ for(let i=0;i<DAYS.length;i++) autoSwapDay(i); }
-});
+if(homeToggle){
+  homeToggle.addEventListener('change', ()=>{
+    if(homeToggle.checked){
+      _prevEquipState = {
+        body:document.getElementById('eq_body').checked,
+        db:document.getElementById('eq_db').checked,
+        kb:document.getElementById('eq_kb').checked,
+        band:document.getElementById('eq_band').checked,
+        bb:document.getElementById('eq_bb').checked,
+        cable:document.getElementById('eq_cable').checked,
+        machine:document.getElementById('eq_machine').checked,
+        trx:document.getElementById('eq_trx').checked,
+        cardio:document.getElementById('eq_cardio').checked,
+      };
+      setEquip({body:true,db:true,kb:true,band:true,bb:false,cable:false,machine:false,trx:false,cardio:false}, true);
+    }else{
+      if(_prevEquipState){ setEquip(_prevEquipState, false); }
+    }
+    if(document.getElementById('autoSwap').checked){ for(let i=0;i<DAYS.length;i++) autoSwapDay(i); }
+  });
+}
 
 function setEquip(state, disableOthers){
   const keys=['body','db','kb','band','bb','cable','machine','trx','cardio'];
@@ -571,6 +573,8 @@ function elNS(tag,attrs,text){ const e=document.createElementNS('http://www.w3.o
 // ========================= Helpers =========================
 function toast(msg){ const t = document.createElement('div'); t.textContent=msg; t.style.position='fixed'; t.style.bottom='16px'; t.style.right='16px'; t.style.background='#333'; t.style.color='#fff'; t.style.padding='10px 14px'; t.style.borderRadius='12px'; t.style.opacity='0.95'; t.style.zIndex='99999'; document.body.appendChild(t); setTimeout(()=>t.remove(), 2200); }
 function fmtDate(d){ const z=new Date(d); return z.toLocaleDateString('th-TH',{year:'2-digit',month:'short',day:'numeric'}); }
+function slug(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+window.addEventListener('error', (e)=>{ console.error(e.error||e.message); toast('มีข้อผิดพลาดในสคริปต์: ดู Console'); });
 
 // ========================= Init =========================
 build();
