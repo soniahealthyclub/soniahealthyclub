@@ -1,159 +1,580 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Sonia Healthy Club | Weekly Workout Planner</title>
-  <style>
-    :root{
-      --bg:#fff7fb;       /* pink milk */
-      --card:#ffffff;     /* white */
-      --ink:#2a2a2a;      /* text */
-      --muted:#7a7a7a;    /* muted */
-      --accent:#ff71b8;   /* strawberry pink */
-      --accent-2:#ffd1e6; /* baby pink */
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:ui-rounded,system-ui,-apple-system,Segoe UI,Roboto,Noto Sans Thai,Arial;
-         background:var(--bg);color:var(--ink)}
-    .wrap{max-width:1000px;margin:24px auto;padding:0 16px}
-    .card{background:var(--card);border-radius:22px;padding:20px;
-          box-shadow:0 10px 30px rgba(255,113,184,.15),0 6px 16px rgba(0,0,0,.06)}
-    h1{margin:0 0 6px;font-size:24px}
-    .lead{margin:0 0 14px;color:var(--muted)}
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 12px}
-    .btn{border:0;background:var(--accent);color:#fff;padding:10px 16px;border-radius:16px;font-weight:800;cursor:pointer}
-    .btn.ghost{background:#fff;color:#9d3d6c;border:2px dashed var(--accent-2)}
-    .table{width:100%;border-collapse:separate;border-spacing:0 10px}
-    th,td{padding:12px;background:#fff;border:2px dashed var(--accent-2)}
-    th{background:#fff6fa;text-align:left}
-    .day{width:110px;font-weight:800}
-    .task{display:flex;gap:10px;align-items:center;margin:6px 0}
-    .small{font-size:12px;color:var(--muted)}
-    .note{width:100%;padding:10px;border:2px solid var(--accent-2);border-radius:12px}
-    @media print{
-      .toolbar{display:none}
-      body{background:#fff}
-      .card{box-shadow:none}
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Sonia Healthy Club | Weekly Workout Planner — โปรแกรม • เซ็ต • สลับท่า</title>
+<style>
+  :root{ --bg:#fff7fb; --card:#fff; --ink:#2a2a2a; --muted:#7a7a7a; --accent:#ff71b8; --accent2:#ffd1e6; --good:#4caf50; --warn:#ff9800; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:ui-rounded,system-ui,-apple-system,Segoe UI,Roboto,Noto Sans Thai,Arial;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:1100px;margin:22px auto;padding:0 16px}
+  .card{background:var(--card);border-radius:22px;padding:16px;box-shadow:0 10px 30px rgba(255,113,184,.15),0 6px 16px rgba(0,0,0,.06)}
+  h1{margin:0 0 6px;font-size:24px}
+  .lead{margin:0 0 12px;color:var(--muted)}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .btn{border:0;background:var(--accent);color:#fff;padding:10px 14px;border-radius:14px;font-weight:800;cursor:pointer}
+  .btn.ghost{background:#fff;color:#9d3d6c;border:2px dashed var(--accent2)}
+  .btn.danger{background:#f44336}
+  .btn.icon{padding:8px 10px;border-radius:10px;line-height:1}
+  input,select,textarea{padding:10px 12px;border-radius:12px;border:2px solid var(--accent2);background:#fff;outline:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(255,113,184,.15)}
+  .grid{display:grid;gap:10px}
+  @media(min-width:960px){.grid{grid-template-columns:1fr 1fr}}
+  .equip{display:flex;flex-wrap:wrap;gap:8px}
+  .pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:#fff;border:2px dashed var(--accent2);font-size:13px}
+  .table{width:100%;border-collapse:separate;border-spacing:0 10px}
+  th,td{padding:10px;background:#fff;border:2px dashed var(--accent2);vertical-align:top}
+  th{background:#fff6fa}
+  .day{width:120px;font-weight:900}
+  .exlist{display:flex;flex-direction:column;gap:8px}
+  .exrow{display:grid;grid-template-columns:minmax(180px,1.6fr) .5fr .7fr .7fr .7fr auto;gap:6px;align-items:center}
+  .exname{font-weight:700}
+  .small{font-size:12px;color:var(--muted)}
+  .badge{font-size:11px;padding:2px 6px;border-radius:8px;background:#fff6fa;border:1px dashed var(--accent2);margin-left:6px}
+  .note{width:100%;min-height:38px}
+  details{background:#fff;border:2px dashed var(--accent2);border-radius:12px;padding:8px}
+  summary{cursor:pointer;font-weight:700}
+  .right{display:flex;justify-content:flex-end;gap:6px}
+  .toolbar .spacer{flex:1}
+  @media print{ .toolbar{display:none} .card{box-shadow:none} body{background:#fff} }
+  /* Modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;padding:16px;z-index:9999}
+  .modal.open{display:flex}
+  .modal .box{max-width:920px;width:100%;background:#fff;border-radius:18px;padding:16px;border:2px dashed var(--accent2)}
+  .chart{width:100%;height:300px;border:2px dashed var(--accent2);border-radius:14px;overflow:hidden;background:#fff}
+  .legend{display:flex;gap:10px;align-items:center}
+  .legend .dot{width:10px;height:10px;border-radius:50%;background:#ff71b8}
+</style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
-      <h1>ตารางออกกำลังกายประจำสัปดาห์</h1>
-      <p class="lead">ติ๊กเช็กกิจกรรมแต่ละวัน + เขียนโน้ตสั้น ๆ — ระบบจะบันทึกไว้ในเครื่องของคุณอัตโนมัติ</p>
+      <h1>ตารางออกกำลังกายประจำสัปดาห์ 🏋️‍♀️💖</h1>
+      <p class="lead">เลือกอุปกรณ์ที่มี → สร้างโปรแกรมอัตโนมัติ (ตามเป้าหมาย/จำนวนวัน) → ปรับเซ็ต/ครั้ง/น้ำหนัก/RPE ได้เอง • สลับท่าอัตโนมัติถ้าอุปกรณ์ไม่พร้อม</p>
 
-      <div class="toolbar">
-        <button class="btn" onclick="resetWeek()">รีเซ็ตสัปดาห์</button>
+      <!-- Global controls -->
+      <div class="row toolbar" style="margin-bottom:10px">
+        <label>เป้าหมาย
+          <select id="goal">
+            <option value="fatloss">ลดไขมัน</option>
+            <option value="recomp" selected>รีคอม (เฟิร์ม + ไขมันลงเล็กน้อย)</option>
+            <option value="muscle">เพิ่มกล้าม/ความแข็งแรง</option>
+            <option value="general">สุขภาพทั่วไป</option>
+          </select>
+        </label>
+        <label>ระดับ
+          <select id="level">
+            <option>Beginner</option><option selected>Intermediate</option><option>Advanced</option>
+          </select>
+        </label>
+        <label>จำนวนวัน/สัปดาห์
+          <select id="daysPerWeek">
+            <option>3</option><option selected>4</option><option>5</option><option>6</option>
+          </select>
+        </label>
+        <div class="equip">
+          <span class="pill"><input type="checkbox" id="eq_body" checked> น้ำหนักตัว</span>
+          <span class="pill"><input type="checkbox" id="eq_db" checked> ดัมเบล</span>
+          <span class="pill"><input type="checkbox" id="eq_kb" checked> เคตเทิลเบล</span>
+          <span class="pill"><input type="checkbox" id="eq_band" checked> ยางยืด</span>
+          <span class="pill"><input type="checkbox" id="eq_bb" checked> บาร์เบล</span>
+          <span class="pill"><input type="checkbox" id="eq_cable" checked> สายเคเบิล</span>
+          <span class="pill"><input type="checkbox" id="eq_machine" checked> เครื่องเวท</span>
+          <span class="pill"><input type="checkbox" id="eq_trx"> TRX</span>
+          <span class="pill"><input type="checkbox" id="eq_cardio" checked> เครื่องคาร์ดิโอ</span>
+          <span class="pill" title="ปิดอุปกรณ์ยิมทั้งหมด เหลืออุปกรณ์ที่บ้าน"><input type="checkbox" id="homeOnly"> Home Only</span>
+        </div>
+        <span class="pill"><input type="checkbox" id="autoSwap" checked> ตัด/สลับท่าอัตโนมัติถ้าอุปกรณ์ไม่พร้อม</span>
+        <button class="btn" onclick="generateWeek()">สร้างสัปดาห์นี้อัตโนมัติ</button>
+        <button class="btn ghost" onclick="resetWeek()">รีเซ็ต</button>
         <button class="btn ghost" onclick="window.print()">พิมพ์/บันทึก PDF</button>
+        <span class="spacer"></span>
+        <button class="btn ghost" onclick="openProgress()">กราฟความก้าวหน้า 📈</button>
       </div>
 
       <table class="table">
         <thead>
           <tr>
             <th class="day">วัน</th>
-            <th>ภารกิจ</th>
-            <th>โน้ต/แผนสำหรับวันนี้</th>
+            <th>โปรแกรม / รายการท่า (Sets × Reps/นาที) • น้ำหนัก (กก.) • RPE</th>
+            <th>โน้ต</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
-
-      <p class="small">
-        แนวทางแนะนำ: เลือกอย่างน้อย 2 ภารกิจ/วัน เช่น คาร์ดิโอ 20–30 นาที + ยืดเหยียด 10 นาที หรือเวท/แรงต้าน 30 นาที
-        — ฟังร่างกายและพักให้เพียงพอด้วยนะคะ 💖
-      </p>
+      <p class="small">* ปลอดภัยไว้ก่อน: วอร์มอัพ 5–10 นาที + เทคนิคถูกต้อง • ปรับน้ำหนักตาม RPE 7–9 สำหรับเซ็ตทำงาน • กด “Log” เพื่อบันทึกน้ำหนัก/RPE และดูกราฟความก้าวหน้า</p>
     </div>
   </div>
 
-  <script>
-    const DAYS = ["จันทร์","อังคาร","พุธ","พฤหัสฯ","ศุกร์","เสาร์","อาทิตย์"];
-    const TASKS = [
-      { id:"cardio",   label:"คาร์ดิโอ 20–30 นาที" },
-      { id:"strength", label:"เวท/แรงต้าน 30 นาที" },
-      { id:"stretch",  label:"ยืดเหยียด 10 นาที"   },
-      { id:"steps",    label:"ก้าวเดินครบ 8,000+"  },
-      { id:"water",    label:"น้ำ 6–8 แก้ว"        }
-    ];
-    const KEY = "shc_weekly_planner_v1";
+  <!-- Progress Modal -->
+  <div id="progressModal" class="modal" aria-hidden="true">
+    <div class="box">
+      <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div class="row">
+          <label>ท่า
+            <select id="progEx"></select>
+          </label>
+          <label>ตัวชี้วัด
+            <select id="progMetric">
+              <option value="e1rm">ประมาณ 1RM (Epley)</option>
+              <option value="volume">โวลุม (sets×reps×kg)</option>
+              <option value="weight">น้ำหนัก/เซ็ต</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <button class="btn ghost" onclick="exportLogs()">Export (.json)</button>
+          <button class="btn danger" onclick="closeProgress()">ปิด</button>
+        </div>
+      </div>
+      <div class="chart" id="chart"></div>
+      <div class="small" id="chartHint" style="margin-top:8px"></div>
+    </div>
+  </div>
 
-    function makeRow(dayIndex){
-      const tr = document.createElement("tr");
+<script>
+// ========================= Data =========================
+const DAYS = ["จันทร์","อังคาร","พุธ","พฤหัสฯ","ศุกร์","เสาร์","อาทิตย์"];
+const KEY_PLAN = "shc_workout_planner_v3";
+const KEY_LOGS = "shc_workout_logs_v1";
 
-      const tdDay = document.createElement("td");
-      tdDay.className = "day";
-      tdDay.textContent = DAYS[dayIndex];
-      tr.appendChild(tdDay);
+// Exercise helper
+function ex(id,name,muscle,type,equip,def){ return {id,name,muscle,type,equip,def}; }
 
-      const tdTasks = document.createElement("td");
-      TASKS.forEach(t=>{
-        const id = `${t.id}_${dayIndex}`;
-        const wrap = document.createElement("label");
-        wrap.className = "task";
-        const cb = document.createElement("input");
-        cb.type = "checkbox";
-        cb.id = id;
-        cb.addEventListener("change", save);
-        const span = document.createElement("span");
-        span.textContent = t.label;
-        wrap.appendChild(cb); wrap.appendChild(span);
-        tdTasks.appendChild(wrap);
-      });
-      tr.appendChild(tdTasks);
+// unit: reps | sec | min; equipment tags: body, db, kb, bb, cable, machine, band, trx, cardio
+const EXS = [
+  // --- Lower body / Glutes ---
+  ex("back-squat","Back Squat (บาร์เบล)",      "ขา/ก้น",   "strength", ["bb"],      {sets:4,reps:"6-10"}),
+  ex("front-squat","Front Squat",                 "ขา/ก้น",   "strength", ["bb"],      {sets:4,reps:"5-8"}),
+  ex("goblet-squat","Goblet Squat",                "ขา/ก้น",   "strength", ["db","kb"],{sets:3,reps:"8-12"}),
+  ex("bulgarian-split-squat","Bulgarian Split Squat",      "ขา/ก้น",   "strength", ["db","body"],{sets:3,reps:"8-12"}),
+  ex("hip-thrust","Hip Thrust",                  "ก้น",       "strength", ["bb","machine"],{sets:4,reps:"8-12"}),
+  ex("glute-bridge","Glute Bridge",                "ก้น",       "strength", ["body","db"],{sets:3,reps:"10-15"}),
+  ex("romanian-deadlift","Romanian Deadlift",          "ขาหลัง",   "strength", ["bb","db"],{sets:4,reps:"6-10"}),
+  ex("deadlift","Deadlift (เดดลิฟต์)",         "หลัง/ขา",   "strength", ["bb"],      {sets:3,reps:"3-5"}),
+  ex("sumo-deadlift","Sumo Deadlift",             "หลัง/ก้น",  "strength", ["bb"],      {sets:3,reps:"3-6"}),
+  ex("leg-press","Leg Press",                   "ขา",        "strength", ["machine"], {sets:4,reps:"8-12"}),
+  ex("hack-squat","Hack Squat",                  "ขา",        "strength", ["machine"], {sets:4,reps:"8-12"}),
+  ex("leg-extension","Leg Extension",               "หน้าขา",    "strength", ["machine"], {sets:3,reps:"10-15"}),
+  ex("leg-curl","Leg Curl",                    "หลังขา",    "strength", ["machine"], {sets:3,reps:"10-15"}),
+  ex("step-up","DB Step-up",                     "ขา/ก้น",   "strength", ["db"],      {sets:3,reps:"8-12/ข้าง"}),
+  ex("lunge","Walking Lunge",                 "ขา/ก้น",   "strength", ["db","bb","body"],{sets:3,reps:"10-16/ข้าง"}),
+  ex("calf-raise","Calf Raise (ยืน)",             "น่อง",      "strength", ["machine","db","bb"],{sets:4,reps:"10-15"}),
+  ex("cable-kickback","Cable Kickback",              "ก้น",       "strength", ["cable"],   {sets:3,reps:"12-15"}),
+  ex("abduction","Abduction (เครื่อง/แบนด์)",      "ก้นข้าง",   "strength", ["machine","band"],{sets:3,reps:"12-20"}),
 
-      const tdNote = document.createElement("td");
-      const note = document.createElement("textarea");
-      note.className = "note";
-      note.rows = 2;
-      note.placeholder = "เช่น วิ่งช้า 25 นาที + เวทช่วงล่าง";
-      note.id = `note_${dayIndex}`;
-      note.addEventListener("input", save);
-      tdNote.appendChild(note);
-      tr.appendChild(tdNote);
+  // --- Upper body Push ---
+  ex("bench-press","Bench Press (บาร์เบล)",       "อก",        "strength", ["bb"],      {sets:4,reps:"5-8"}),
+  ex("db-bench-press","Dumbbell Bench Press",        "อก",        "strength", ["db"],      {sets:4,reps:"8-12"}),
+  ex("incline-db-press","Incline DB Press",            "อกบน/ไหล่", "strength", ["db"],      {sets:3,reps:"8-12"}),
+  ex("push-up","Push-up",                      "อก/ไหล่/แขน","strength",["body"],   {sets:3,reps:"8-15"}),
+  ex("ohp","Overhead Press (บาร์เบล)",    "ไหล่",      "strength", ["bb"],      {sets:4,reps:"5-8"}),
+  ex("db-shoulder-press","DB Shoulder Press",           "ไหล่",      "strength", ["db"],      {sets:3,reps:"8-12"}),
+  ex("lateral-raise","Lateral Raise",               "ไหล่ข้าง",  "strength", ["db","cable"],{sets:3,reps:"12-15"}),
+  ex("pec-fly","Cable Fly / Pec Deck",        "อก",        "strength", ["cable","machine"],{sets:3,reps:"12-15"}),
+  ex("dips","Dips (เครื่อง/พยุง)",           "อก/ไหล่/แขน","strength", ["machine","body"], {sets:3,reps:"6-10"}),
+  ex("triceps-pushdown","Triceps Pushdown",            "หลังแขน",    "strength", ["cable"],   {sets:3,reps:"10-12"}),
+  ex("skull-crusher","Skull Crusher (EZ/DB)",        "หลังแขน",    "strength", ["bb","db"],{sets:3,reps:"8-12"}),
+  ex("arnold-press","Arnold Press",                 "ไหล่",      "strength", ["db"],      {sets:3,reps:"8-12"}),
 
-      return tr;
-    }
+  // --- Upper body Pull ---
+  ex("lat-pulldown","Lat Pulldown",                 "หลัง",      "strength", ["machine","cable"],{sets:4,reps:"8-12"}),
+  ex("seated-cable-row","Seated Cable Row",            "หลังกลาง",   "strength", ["cable"],   {sets:4,reps:"8-12"}),
+  ex("bent-over-row","Bent-over Row (บาร์เบล)",      "หลัง",      "strength", ["bb"],      {sets:4,reps:"6-10"}),
+  ex("one-arm-db-row","One-arm DB Row",              "หลัง",      "strength", ["db"],      {sets:3,reps:"8-12"}),
+  ex("chest-supported-row","Chest-supported Row",        "หลัง",      "strength", ["machine","db"],{sets:3,reps:"10-12"}),
+  ex("face-pull","Face Pull",                    "หลังไหล่",   "strength", ["cable"],   {sets:3,reps:"12-15"}),
+  ex("reverse-fly","Reverse Fly (DB/Cable)",       "หลังไหล่",   "strength", ["db","cable"],{sets:3,reps:"12-15"}),
+  ex("pull-up","Pull-up / Assisted Pull-up",      "หลัง/แขน",   "strength", ["machine","body"],{sets:3,reps:"5-10"}),
+  ex("hammer-curl","Hammer Curl",                  "หน้าแขน",    "strength", ["db"],      {sets:3,reps:"10-12"}),
+  ex("ez-curl","EZ Bar Curl/DB Curl",          "หน้าแขน",    "strength", ["bb","db"],{sets:3,reps:"8-12"}),
+  ex("preacher-curl","Preacher / Cable Curl",        "หน้าแขน",    "strength", ["machine","cable"],{sets:3,reps:"10-12"}),
 
-    function build(){
-      const tb = document.getElementById("tbody");
-      tb.innerHTML = "";
-      for(let i=0;i<DAYS.length;i++) tb.appendChild(makeRow(i));
-      load();
-    }
+  // --- Core ---
+  ex("plank","Plank",                        "แกนกลาง",   "strength", ["body"],   {sets:3,reps:"30-60 sec"}),
+  ex("side-plank","Side Plank (L/R)",             "แกนกลาง",   "strength", ["body"],   {sets:3,reps:"20-40 sec"}),
+  ex("dead-bug","Dead Bug",                     "แกนกลาง",   "strength", ["body"],   {sets:3,reps:"8-12/ข้าง"}),
+  ex("hanging-knee-raise","Hanging Knee Raise",          "หน้าท้อง",   "strength", ["machine","body"],{sets:3,reps:"8-12"}),
+  ex("cable-woodchop","Cable Wood Chop",             "แกนกลาง",   "strength", ["cable"],   {sets:3,reps:"10-12/ข้าง"}),
+  ex("pallof-press","Pallof Press (Cable/Band)",   "แกนกลาง",   "strength", ["cable","band"],{sets:3,reps:"10-12/ข้าง"}),
+  ex("ab-wheel","Ab Wheel Rollout",             "แกนกลาง",   "strength", ["body"],   {sets:3,reps:"6-10"}),
 
-    function load(){
-      try{
-        const data = JSON.parse(localStorage.getItem(KEY) || "{}");
-        Object.entries(data).forEach(([k,v])=>{
-          const el = document.getElementById(k);
-          if(!el) return;
-          if(el.type === "checkbox") el.checked = !!v;
-          else el.value = v;
-        });
-      }catch{}
-    }
+  // --- Cardio ---
+  ex("treadmill-run","Treadmill Run",               "คาร์ดิโอ",   "cardio",  ["cardio"], {sets:1,reps:"20-30 min"}),
+  ex("incline-walk","Incline Walk (Treadmill)",    "คาร์ดิโอ",   "cardio",  ["cardio"], {sets:1,reps:"25-40 min"}),
+  ex("bike","Bike (จักรยาน)",               "คาร์ดิโอ",   "cardio",  ["cardio"], {sets:1,reps:"20-40 min"}),
+  ex("elliptical","Elliptical",                   "คาร์ดิโอ",   "cardio",  ["cardio"], {sets:1,reps:"20-40 min"}),
+  ex("rower","Rowing Machine",              "คาร์ดิโอ",   "cardio",  ["cardio"], {sets:1,reps:"15-25 min"}),
+  ex("stairmaster","StairMaster",                 "คาร์ดิโอ",   "cardio",  ["cardio"], {sets:1,reps:"15-25 min"}),
+  ex("jump-rope","Jump Rope",                    "คาร์ดิโอ",   "cardio",  ["body","band"], {sets:1,reps:"10-20 min"}),
+  ex("outdoor-run","Outdoor Run/Walk",            "คาร์ดิโอ",   "cardio",  ["body"],   {sets:1,reps:"20-40 min"}),
+  ex("hiit-30-30","HIIT 30/30 (เลือกเครื่อง)",     "คาร์ดิโอ",   "cardio",  ["cardio","body"], {sets:1,reps:"12-16 รอบ"}),
 
-    function save(){
-      const data = {};
-      for(let i=0;i<DAYS.length;i++){
-        TASKS.forEach(t=>{
-          const id = `${t.id}_${i}`;
-          const el = document.getElementById(id);
-          data[id] = !!el?.checked;
-        });
-        const nt = document.getElementById(`note_${i}`);
-        data[`note_${i}`] = nt?.value || "";
-      }
-      localStorage.setItem(KEY, JSON.stringify(data));
-    }
+  // --- Mobility / Stretch ---
+  ex("hamstring-stretch","Hamstring Stretch",            "ยืดเหยียด",  "mobility",["body"],   {sets:2,reps:"30 sec/ข้าง"}),
+  ex("quad-stretch","Quad Stretch",                 "ยืดเหยียด",  "mobility",["body"],   {sets:2,reps:"30 sec/ข้าง"}),
+  ex("hip-flexor-stretch","Hip Flexor Stretch",           "ยืดเหยียด",  "mobility",["body"],   {sets:2,reps:"30 sec/ข้าง"}),
+  ex("glute-stretch","Glute Stretch (Figure-4)",     "ยืดเหยียด",  "mobility",["body"],   {sets:2,reps:"30 sec/ข้าง"}),
+  ex("t-spine-rotation","Thoracic Rotation",            "ยืดเหยียด",  "mobility",["body"],   {sets:2,reps:"8-10/ข้าง"}),
+  ex("band-dislocates","Band Shoulder Dislocates",     "ยืดหัวไหล่",  "mobility",["band"],   {sets:2,reps:"10-15"}),
+  ex("chest-opener","Chest Opener (Doorway)",       "ยืดอก",      "mobility",["body"],   {sets:2,reps:"30 sec"}),
+  ex("calf-stretch","Calf Stretch",                 "น่อง",       "mobility",["body"],   {sets:2,reps:"30 sec/ข้าง"}),
+  ex("cat-cow","Cat-Cow",                      "หลัง",       "mobility",["body"],   {sets:2,reps:"8-12"}),
+  ex("child-pose","Child's Pose",                 "หลัง/สะโพก",  "mobility",["body"],   {sets:2,reps:"45-60 sec"})
+];
 
-    function resetWeek(){
-      localStorage.removeItem(KEY);
-      build();
-    }
+// Quick map for lookups
+const EXMAP = Object.fromEntries(EXS.map(x=>[x.id,x]));
 
-    window.addEventListener("load", build);
-  </script>
+// Program templates (exercise IDs)
+const TEMPLATES = {
+  // 45–60 นาที Full Body
+  fullBody45: {name:"Full Body 45 นาที", list:["goblet-squat","one-arm-db-row","glute-bridge","push-up","lateral-raise","plank"]},
+  // Lower
+  lowerA: {name:"Lower A (สควอตโฟกัส)", list:["goblet-squat","romanian-deadlift","bulgarian-split-squat","hip-thrust","calf-raise","plank"]},
+  lowerB: {name:"Lower B (ฮิปฮินจ์)", list:["back-squat","romanian-deadlift","leg-press","leg-curl","cable-kickback","side-plank"]},
+  legsQuads: {name:"Legs – Quads", list:["back-squat","hack-squat","leg-extension","lunge","calf-raise","plank"]},
+  legsHinge: {name:"Legs – Hinge/Glutes", list:["romanian-deadlift","hip-thrust","step-up","abduction","cable-kickback","side-plank"]},
+  glutes: {name:"Glutes Focus", list:["hip-thrust","bulgarian-split-squat","romanian-deadlift","abduction","cable-kickback","side-plank"]},
+  // Upper Push/Pull
+  pushStrength: {name:"Upper Push (แรง)", list:["bench-press","ohp","incline-db-press","lateral-raise","triceps-pushdown","plank"]},
+  pushHyper: {name:"Upper Push (ไฮเปอร์)", list:["db-bench-press","arnold-press","incline-db-press","pec-fly","lateral-raise","skull-crusher"]},
+  pullStrength: {name:"Upper Pull (แรง)", list:["bent-over-row","lat-pulldown","seated-cable-row","face-pull","ez-curl","dead-bug"]},
+  pullHyper: {name:"Upper Pull (ไฮเปอร์)", list:["chest-supported-row","lat-pulldown","one-arm-db-row","reverse-fly","hammer-curl","pallof-press"]},
+  armsDelts: {name:"Arms + Delts", list:["lateral-raise","arnold-press","hammer-curl","ez-curl","triceps-pushdown","pallof-press"]},
+  coreStability: {name:"Core Stability", list:["plank","side-plank","dead-bug","pallof-press","ab-wheel","t-spine-rotation"]},
+  // Conditioning
+  cardioCore: {name:"Cardio + Core", list:["incline-walk","plank","dead-bug","side-plank","hamstring-stretch","quad-stretch"]},
+  briskRun: {name:"Cardio ยาว 30–40 นาที", list:["treadmill-run","hamstring-stretch","quad-stretch"]},
+  hiit: {name:"HIIT 30/30 + Core", list:["hiit-30-30","plank","pallof-press","cat-cow"]}
+};
+
+// Splits per GOAL & days
+const SPLITS = {
+  fatloss: {
+    3: ["fullBody45","cardioCore","fullBody45"],
+    4: ["upperPush","lowerA","upperPull","cardioCore"].map(alias=>({upperPush:"pushHyper",upperPull:"pullHyper"}[alias]||alias),),
+    5: ["pushHyper","lowerA","hiit","pullHyper","briskRun"],
+    6: ["pushHyper","legsQuads","pullHyper","legsHinge","hiit","briskRun"]
+  },
+  recomp: {
+    3: ["fullBody45","lowerA","upperPull"],
+    4: ["pushStrength","lowerA","pullStrength","lowerB"],
+    5: ["pushStrength","lowerA","coreStability","pullStrength","glutes"],
+    6: ["pushStrength","legsQuads","pullStrength","legsHinge","coreStability","glutes"]
+  },
+  muscle: {
+    3: ["fullBody45","legsHinge","armsDelts"],
+    4: ["pushHyper","legsQuads","pullHyper","legsHinge"],
+    5: ["pushHyper","legsQuads","pullHyper","glutes","coreStability"],
+    6: ["pushStrength","legsQuads","pullStrength","glutes","armsDelts","coreStability"]
+  },
+  general: {
+    3: ["fullBody45","cardioCore","fullBody45"],
+    4: ["fullBody45","cardioCore","fullBody45","briskRun"],
+    5: ["fullBody45","cardioCore","pushHyper","pullHyper","briskRun"],
+    6: ["fullBody45","pushHyper","pullHyper","cardioCore","legsHinge","briskRun"]
+  }
+};
+
+// ========================= State =========================
+let PLAN = loadPlan() || initPlan();
+let LOGS = loadLogs();
+
+function initPlan(){
+  const obj = {}; DAYS.forEach((d,i)=>{ obj[i] = { note:"", items:[] } }); return obj;
+}
+
+// ========================= UI Builders =========================
+function build(){
+  const tb = document.getElementById('tbody'); tb.innerHTML='';
+  DAYS.forEach((d,i)=> tb.appendChild(dayRow(i)) );
+}
+
+function dayRow(dayIdx){
+  const tr = document.createElement('tr');
+  const tdDay = document.createElement('td'); tdDay.className='day'; tdDay.textContent=DAYS[dayIdx]; tr.appendChild(tdDay);
+
+  const tdProg = document.createElement('td');
+  // Preset selector + buttons
+  const top = document.createElement('div'); top.className='row';
+  const sel = document.createElement('select');
+  sel.innerHTML = `<option value="">เลือก Preset</option>${Object.entries(TEMPLATES).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('')}`;
+  sel.onchange = ()=> applyTemplate(dayIdx, sel.value);
+  top.appendChild(sel);
+  top.appendChild(btn('เพิ่มท่า','ghost',()=> addExercisePicker(dayIdx)));
+  top.appendChild(btn('เพิ่มคาร์ดิโอ','ghost',()=> addCardioPicker(dayIdx)));
+  top.appendChild(btn('เพิ่มยืดเหยียด','ghost',()=> addMobilityPicker(dayIdx)));
+  top.appendChild(btn('สแกนอุปกรณ์/สลับ','ghost',()=> autoSwapDay(dayIdx)));
+  tdProg.appendChild(top);
+
+  // List of items
+  const list = document.createElement('div'); list.className='exlist'; list.id = `list_${dayIdx}`; tdProg.appendChild(list);
+  renderDayList(dayIdx);
+
+  tr.appendChild(tdProg);
+
+  // Note cell
+  const tdNote = document.createElement('td');
+  const ta = document.createElement('textarea'); ta.className='note'; ta.placeholder='โน้ต เช่น RPE8, น้ำหนักที่ใช้'; ta.value = PLAN[dayIdx].note || ''; ta.oninput = ()=> { PLAN[dayIdx].note = ta.value; savePlan(); };
+  tdNote.appendChild(ta); tr.appendChild(tdNote);
+
+  return tr;
+}
+
+function renderDayList(dayIdx){
+  const list = document.getElementById(`list_${dayIdx}`); list.innerHTML='';
+  const items = PLAN[dayIdx].items || [];
+  if(!items.length){ const p = document.createElement('div'); p.className='small'; p.textContent='ยังไม่มีรายการ ลองเลือก Preset หรือเพิ่มท่าด้านบน'; list.appendChild(p); return; }
+  items.forEach((it, idx)=> list.appendChild(exRow(dayIdx, idx, it)) );
+}
+
+function exRow(dayIdx, idx, it){
+  const div = document.createElement('div'); div.className='exrow';
+  const eqOk = isEquipAvailable(it.equip||[]);
+  const eqBadge = eqOk? '' : `<span class="badge">อุปกรณ์ไม่พร้อม</span>`;
+  const last = lastLog(it.id);
+  const lastTxt = last? ` • ล่าสุด: ${fmtDate(last.date)} – ${last.weight??'?'}kg @RPE${last.rpe??'?'} (${last.reps||'?'} reps)` : '';
+  div.innerHTML = `
+    <div>
+      <div class="exname">${it.name} ${eqBadge}</div>
+      <div class="small">${it.muscle} • ${it.type}${lastTxt}</div>
+    </div>
+    <input value="${it.sets||it.def?.sets||3}" type="number" min="1" step="1" title="Sets"/>
+    <input value="${it.reps||it.def?.reps||''}" placeholder="เช่น 8-12 หรือ 30-60 sec"/>
+    <input value="${it.weight||''}" placeholder="kg" title="น้ำหนัก (kg)"/>
+    <input value="${it.rpe||''}" placeholder="RPE" title="RPE"/>
+    <div class="right">
+      <button class="btn icon ghost" title="ดูกราฟ" aria-label="graph">📈</button>
+      <button class="btn icon ghost" title="บันทึก" aria-label="log">Log</button>
+      <button class="btn ghost" title="สลับท่า">สลับ</button>
+      <button class="btn danger" title="ลบ">ลบ</button>
+    </div>`;
+
+  const [setsEl,repsEl,wtEl,rpeEl,btnGraph,btnLog,swapBtn,delBtn] = [div.children[1],div.children[2],div.children[3],div.children[4],div.children[5].children[0],div.children[5].children[1],div.children[5].children[2],div.children[5].children[3]];
+  setsEl.onchange = ()=>{ it.sets = +setsEl.value||it.def?.sets||3; savePlan(); };
+  repsEl.onchange = ()=>{ it.reps = repsEl.value||it.def?.reps||''; savePlan(); };
+  wtEl.onchange = ()=>{ it.weight = parseFloat(wtEl.value)||''; savePlan(); };
+  rpeEl.onchange = ()=>{ it.rpe = parseFloat(rpeEl.value)||''; savePlan(); };
+  delBtn.onclick = ()=>{ PLAN[dayIdx].items.splice(idx,1); savePlan(); renderDayList(dayIdx); };
+  swapBtn.onclick = ()=> openSwap(dayIdx, idx, it);
+  btnLog.onclick = ()=> { doLog(it, setsEl.value, repsEl.value, wtEl.value, rpeEl.value); renderDayList(dayIdx); };
+  btnGraph.onclick = ()=> { openProgress(it.id); };
+
+  if(!eqOk && document.getElementById('autoSwap').checked){
+    const alt = findAlternative(it);
+    if(alt){ Object.assign(it, mapEx(alt)); savePlan(); setTimeout(()=>renderDayList(dayIdx),0); }
+  }
+  return div;
+}
+
+function btn(text, cls, fn){ const b=document.createElement('button'); b.className = 'btn ' + (cls||''); b.textContent=text; b.onclick=fn; return b; }
+
+// ========================= Pickers =========================
+function addExercisePicker(dayIdx){
+  const candidates = EXS.filter(x=> x.type==='strength' && isEquipAvailable(x.equip));
+  picker(dayIdx, candidates, ex=> addItem(dayIdx, ex));
+}
+function addCardioPicker(dayIdx){
+  const candidates = EXS.filter(x=> x.type==='cardio' && isEquipAvailable(x.equip));
+  picker(dayIdx, candidates, ex=> addItem(dayIdx, ex));
+}
+function addMobilityPicker(dayIdx){
+  const candidates = EXS.filter(x=> x.type==='mobility' && isEquipAvailable(x.equip));
+  picker(dayIdx, candidates, ex=> addItem(dayIdx, ex));
+}
+
+function picker(dayIdx, list, onPick){
+  const sel = document.createElement('select'); sel.style.minWidth='260px';
+  sel.innerHTML = '<option value="">เลือกท่า…</option>' + list.map(x=>`<option value="${x.id}">${x.name} — ${x.muscle}</option>`).join('');
+  sel.onchange = ()=>{ const ex = EXMAP[sel.value]; if(ex){ onPick(ex); sel.remove(); } };
+  document.getElementById(`list_${dayIdx}`).prepend(sel);
+}
+
+function addItem(dayIdx, ex){ PLAN[dayIdx].items.push(mapEx(ex)); savePlan(); renderDayList(dayIdx); }
+function mapEx(x){ return {id:x.id,name:x.name,muscle:x.muscle,type:x.type,equip:x.equip,sets:x.def?.sets||3,reps:x.def?.reps||'',def:x.def}; }
+
+// ========================= Swap / Alternatives =========================
+function openSwap(dayIdx, idx, it){
+  const container = document.getElementById(`list_${dayIdx}`);
+  const alt = findAlternatives(it).slice(0,6);
+  const box = document.createElement('details'); box.open = true; box.innerHTML = `<summary>สลับท่าแทน "${it.name}"</summary>`;
+  const wrap = document.createElement('div'); wrap.className='row'; wrap.style.marginTop='6px';
+  if(!alt.length){ wrap.innerHTML = '<span class="small">ไม่พบตัวเลือกที่เหมาะกับอุปกรณ์ตอนนี้</span>'; }
+  alt.forEach(a=>{
+    const b = btn(a.name + ' • ' + a.muscle, 'ghost', ()=>{ PLAN[dayIdx].items[idx] = mapEx(a); savePlan(); renderDayList(dayIdx); box.remove(); }); b.style.whiteSpace='nowrap'; wrap.appendChild(b);
+  });
+  box.appendChild(wrap); container.insertBefore(box, container.children[idx+1]);
+}
+function findAlternative(it){ return findAlternatives(it)[0]; }
+function findAlternatives(it){
+  return EXS.filter(x=> x.type===it.type && x.muscle===it.muscle && isEquipAvailable(x.equip) && x.id!==it.id);
+}
+
+// ========================= Templates / Auto generate =========================
+function applyTemplate(dayIdx, key){ if(!key) return; const t = TEMPLATES[key]; if(!t) return; const ids = t.list; const items=[]; let swapped=0; ids.forEach(id=>{ const ex = EXMAP[id]; if(!ex) return; if(isEquipAvailable(ex.equip)){ items.push(mapEx(ex)); } else if(document.getElementById('autoSwap').checked){ const alt = findAlternatives(ex||{}); if(alt.length){ items.push(mapEx(alt[0])); swapped++; } }
+  }); PLAN[dayIdx].items = items; savePlan(); renderDayList(dayIdx); if(swapped) toast(`${swapped} ท่าถูกสลับเพราะอุปกรณ์ไม่พร้อม`); }
+
+function suggestSplit(goal, days){
+  const g = SPLITS[goal]||SPLITS.recomp; return (g[days]||g[4]);
+}
+
+function generateWeek(){
+  const days = +document.getElementById('daysPerWeek').value;
+  const goal = document.getElementById('goal').value;
+  const split = suggestSplit(goal, days);
+  for(let i=0;i<DAYS.length;i++){ PLAN[i].items=[]; PLAN[i].note=''; }
+  for(let i=0;i<split.length;i++){ applyTemplate(i, split[i]); }
+  // เติม Cardio/Stretch ให้วันที่เหลือ
+  for(let i=split.length;i<DAYS.length;i++){
+    const fallbacks=[EXMAP['outdoor-run'],EXMAP['hamstring-stretch'],EXMAP['quad-stretch']].filter(Boolean);
+    PLAN[i].items=fallbacks.map(mapEx);
+  }
+  savePlan(); build();
+}
+
+function autoSwapDay(dayIdx){ const items = PLAN[dayIdx].items||[]; let changed=0; items.forEach((it,ix)=>{ if(!isEquipAvailable(it.equip)){ const alt=findAlternative(it); if(alt){ PLAN[dayIdx].items[ix]=mapEx(alt); changed++; } } }); if(changed){ savePlan(); renderDayList(dayIdx); toast(`สลับท่าแล้ว ${changed} รายการ`); } else toast('ทุกรายการพร้อมอุปกรณ์แล้ว'); }
+
+// ========================= Equipment utils =========================
+function isEquipAvailable(list){ const eq = currentEquip(); return (list||[]).some(tag=> eq[tag]); }
+function currentEquip(){ return { body:ge('eq_body'), db:ge('eq_db'), kb:ge('eq_kb'), bb:ge('eq_bb'), cable:ge('eq_cable'), machine:ge('eq_machine'), band:ge('eq_band'), trx:ge('eq_trx'), cardio:ge('eq_cardio') }; }
+function ge(id){ const el=document.getElementById(id); return !!(el && el.checked && !el.disabled); }
+
+// Home Only toggle
+let _prevEquipState=null;
+const homeToggle = document.getElementById('homeOnly');
+homeToggle.addEventListener('change', ()=>{
+  if(homeToggle.checked){
+    _prevEquipState = {
+      body:document.getElementById('eq_body').checked,
+      db:document.getElementById('eq_db').checked,
+      kb:document.getElementById('eq_kb').checked,
+      band:document.getElementById('eq_band').checked,
+      bb:document.getElementById('eq_bb').checked,
+      cable:document.getElementById('eq_cable').checked,
+      machine:document.getElementById('eq_machine').checked,
+      trx:document.getElementById('eq_trx').checked,
+      cardio:document.getElementById('eq_cardio').checked,
+    };
+    setEquip({body:true,db:true,kb:true,band:true,bb:false,cable:false,machine:false,trx:false,cardio:false}, true);
+  }else{
+    if(_prevEquipState){ setEquip(_prevEquipState, false); }
+  }
+  // Auto-swap across all days if enabled
+  if(document.getElementById('autoSwap').checked){ for(let i=0;i<DAYS.length;i++) autoSwapDay(i); }
+});
+
+function setEquip(state, disableOthers){
+  const keys=['body','db','kb','band','bb','cable','machine','trx','cardio'];
+  keys.forEach(k=>{
+    const el=document.getElementById('eq_'+k);
+    if(!el) return; el.checked=!!state[k]; el.disabled=!!disableOthers && !['body','db','kb','band'].includes(k);
+  });
+}
+
+// ========================= Save/Load =========================
+function savePlan(){ localStorage.setItem(KEY_PLAN, JSON.stringify(PLAN)); }
+function loadPlan(){ try{ const raw = localStorage.getItem(KEY_PLAN) || localStorage.getItem('shc_workout_planner_v2'); return raw? JSON.parse(raw): null; }catch{ return null; } }
+function resetWeek(){ localStorage.removeItem(KEY_PLAN); PLAN=initPlan(); build(); }
+
+function saveLogs(){ localStorage.setItem(KEY_LOGS, JSON.stringify(LOGS)); }
+function loadLogs(){ try{ const raw = localStorage.getItem(KEY_LOGS); return raw? JSON.parse(raw): {}; }catch{ return {}; } }
+
+// ========================= Logging & Progress =========================
+function doLog(it, sets, reps, weight, rpe){
+  const exId = it.id || slug(it.name);
+  const w = parseFloat(weight); const s = parseInt(sets||it.sets||1); const rp = (reps||it.reps||'').toString(); const _rpe = parseFloat(rpe);
+  if(!LOGS[exId]) LOGS[exId]=[];
+  const entry = {date:new Date().toISOString(), sets:s||null, reps:rp||null, weight:isFinite(w)?w:null, rpe:isFinite(_rpe)?_rpe:null};
+  LOGS[exId].push(entry); saveLogs(); toast('บันทึกแล้ว ✅');
+}
+
+function lastLog(exId){ const arr=LOGS[exId]||[]; return arr.length? arr[arr.length-1]: null; }
+
+function openProgress(presetId){
+  const modal = document.getElementById('progressModal');
+  modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+  // Build select options (used in plan first, then all)
+  const usedSet = new Set();
+  Object.values(PLAN).forEach(d=> (d.items||[]).forEach(it=> usedSet.add(it.id)) );
+  const used = EXS.filter(x=> usedSet.has(x.id));
+  const all = EXS;
+  const sel = document.getElementById('progEx'); sel.innerHTML='';
+  const group = (label, list)=> `<optgroup label="${label}">`+list.map(x=>`<option value="${x.id}">${x.name}</option>`).join('')+`</optgroup>`;
+  sel.innerHTML = group('ใช้ในสัปดาห์นี้', used.length?used:[]) + group('ทั้งหมด', all);
+  sel.onchange = ()=> drawChart(sel.value, document.getElementById('progMetric').value);
+  document.getElementById('progMetric').onchange = ()=> drawChart(sel.value, document.getElementById('progMetric').value);
+  sel.value = presetId || (used[0]?.id || all[0]?.id || '');
+  drawChart(sel.value, document.getElementById('progMetric').value);
+}
+
+function closeProgress(){ const modal = document.getElementById('progressModal'); modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+
+function exportLogs(){ const data = 'data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(LOGS,null,2)); const a=document.createElement('a'); a.href=data; a.download='workout_logs.json'; a.click(); }
+
+function drawChart(exId, metric){
+  const box = document.getElementById('chart'); box.innerHTML='';
+  const logs = (LOGS[exId]||[]).slice(-50); // last 50
+  const hintEl = document.getElementById('chartHint');
+  const ex = EXMAP[exId];
+  if(!logs.length){ box.innerHTML = `<div class="small" style="padding:10px">ยังไม่มีบันทึกของท่านี้ — กดปุ่ม Log เพื่อเริ่มติดตาม</div>`; hintEl.textContent=''; return; }
+  // Prepare points
+  const pts = logs.map(entry=>{
+    const reprange = (entry.reps||'').match(/(\d+)(?:\D+(\d+))?/);
+    const reps = reprange? (reprange[2]? ( (+reprange[1]+ +reprange[2])/2 ): +reprange[1] ) : null;
+    const sets = entry.sets||1; const w = entry.weight||0;
+    let y=0; let yLabel='';
+    if(metric==='e1rm') { y = w && reps? w*(1+reps/30) : 0; yLabel='ประมาณ 1RM'; }
+    else if(metric==='volume') { const r = reps|| (w?10:0); y = sets*(r)*w; yLabel='โวลุม (kg)'; }
+    else { y = w; yLabel='น้ำหนัก (kg)'; }
+    return {date:new Date(entry.date), y, tooltip:`${fmtDate(entry.date)} – ${Math.round(y*10)/10}`};
+  }).filter(p=> p.y>0);
+  if(!pts.length){ box.innerHTML = `<div class="small" style="padding:10px">ยังไม่มีข้อมูลพอสำหรับกราฟ (กรอกน้ำหนักและ/หรือ reps ให้ครบ)</div>`; hintEl.textContent=''; return; }
+
+  const w = box.clientWidth||800, h = 300, pad = 36;
+  const minY = Math.min(...pts.map(p=>p.y));
+  const maxY = Math.max(...pts.map(p=>p.y));
+  const y0 = Math.floor(minY*0.9), y1 = Math.ceil(maxY*1.1);
+  const xScale = (i)=> pad + i*( (w-2*pad) / (pts.length-1||1) );
+  const yScale = (v)=> h-pad - ( (v - y0) / (y1-y0||1) ) * (h-2*pad);
+
+  const svg = elNS('svg',{width:w,height:h});
+  // Axes
+  const axis = el('g',{});
+  svg.appendChild(axis);
+  // y ticks 4 lines
+  for(let t=0;t<5;t++){
+    const val = y0 + t*(y1-y0)/4; const y = yScale(val);
+    svg.appendChild(elNS('line',{x1:pad,y1:y,x2:w-pad,y2:y,stroke:'#eee'}));
+    svg.appendChild(elNS('text',{x:8,y:y+4,fill:'#999','font-size':'11'}, Math.round(val)));
+  }
+  // path
+  const d = pts.map((p,i)=> (i? 'L':'M')+xScale(i)+','+yScale(p.y)).join(' ');
+  svg.appendChild(elNS('path',{d,fill:'none',stroke:'#ff71b8','stroke-width':2}));
+  // points
+  pts.forEach((p,i)=>{
+    const cx=xScale(i), cy=yScale(p.y);
+    const g = elNS('g',{});
+    g.appendChild(elNS('circle',{cx,cy,r:3,fill:'#ff71b8'}));
+    const tt = elNS('title',{}, `${ex?.name||exId}\n${p.tooltip}`);
+    g.appendChild(tt); svg.appendChild(g);
+  });
+
+  box.appendChild(svg);
+  hintEl.textContent = `${ex?.name||''} • จุดข้อมูล ${pts.length} ค่า`;
+}
+
+function el(tag,attrs,text){ const e=document.createElement(tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(text!=null) e.textContent=text; return e; }
+function elNS(tag,attrs,text){ const e=document.createElementNS('http://www.w3.org/2000/svg', tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(text!=null) e.textContent=text; return e; }
+
+// ========================= Helpers =========================
+function toast(msg){ const t = document.createElement('div'); t.textContent=msg; t.style.position='fixed'; t.style.bottom='16px'; t.style.right='16px'; t.style.background='#333'; t.style.color='#fff'; t.style.padding='10px 14px'; t.style.borderRadius='12px'; t.style.opacity='0.95'; t.style.zIndex='99999'; document.body.appendChild(t); setTimeout(()=>t.remove(), 2200); }
+function fmtDate(d){ const z=new Date(d); return z.toLocaleDateString('th-TH',{year:'2-digit',month:'short',day:'numeric'}); }
+
+// ========================= Init =========================
+build();
+
+</script>
 </body>
 </html>
